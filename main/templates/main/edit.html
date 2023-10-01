@@ -1,0 +1,222 @@
+{% extends "main/header.html" %}
+{% load static %}
+
+{% block header %}
+	<link rel="stylesheet" href="{% static 'css/apps.css' %}" type="text/css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+    <div class="shadow" style="background-color: white; max-width: 100%; text-align: left; margin: 30px; padding-top: 20px; padding-bottom: 35px; margin-bottom: 60px">
+        <h2 style="padding-bottom: 20px; border-bottom: 1px solid #ebedf2; padding-left:  30px; margin: 0"><span id="o_title">Edit Offerwall:</span> <span id="editapp" style="color: black; font-style: italic"></span></h2>
+        <div style="padding: 30px;">
+            <div style="text-align: left; max-width: 1000px">
+                <h3 style="margin-bottom: 5px">Name</h3>
+                <input class="input" id="appname">
+                <h3 style="margin-bottom: 5px">Postback URL</h3>
+                <input class="input" id="postback">
+                <h4>Make sure your server responds with a valid 200 response code otherwise our system will retry at most another three times to send the postback</h4>
+                <p>You can use the following macros to sub data into your Postback URL:</p>
+                <p>{userID} - The userID passed to us in the Integration URL</p>
+                <p>{transID} - The transID of this conversion in our database</p>
+                <p>{ip} - The user's IP</p>
+                <p>{offerName} - The name of the offer the user completed</p>
+                <p>{offerID} - The ID of the offer the user completed</p>
+                <p>{revenue} - The revenue you earned for this conversion</p>
+                <p>{currencyReward} - The amount of currency the user should receive as a reward, based on the Currency Conversion Rate below.</p>
+                <p>{hash} - The SHA256 hash of this transaction using the following algorithm, based on your Postback Secret:</p>
+
+                <div>
+                    <div style="width: max-content">
+                        <div class="code1">
+                        <p style="color: #cccccc">JAVASCRIPT</p>
+                        <p style="color: white; line-height: 1.5;">sha256(userID + ip + currencyReward +<br><span style="margin-left: 10px">"<span id="serc1"></span>")</span></p>
+                        </div>
+                        <div class="code1">
+                            <p style="color: #cccccc">PHP</p>
+                            <p style="color: white; line-height: 1.5;">hash("sha256", userID . ip . currencyReward .<br><span style="margin-left: 10px">"<span id="serc2"></span>")</span></p>
+                        </div>
+                        <button onclick="$('#removeit').css('display', 'none'); myModal0a.style.display = 'block';" class="button click" style="display: block; margin: 10px auto auto auto">Test Postback</button>
+                        <p style="width: max-content; margin: 7px auto auto auto; display: none; text-align: center; max-width: 600px" id="rect1"></p>
+                    </div>
+                </div>
+                <h3 style="margin-bottom: 5px">Currency Name</h3>
+                <input class="input" id="cur_name">
+                <h3 style="margin-bottom: 5px">Currency Name Plural</h3>
+                <input class="input" id="curs_name">
+                <h3 style="margin-bottom: 5px">Currency Abbreviation</h3>
+                <input class="input" id="cura_name">
+                <h3 style="margin-bottom: 5px">Currency Multiplier</h3>
+                <input class="input" id="cur_multi" onkeydown="return ( event.ctrlKey || event.altKey || event.keyCode === 190 || event.keyCode === 190 || event.keyCode === 110
+						|| (47<event.keyCode && event.keyCode<58 && event.shiftKey==false)
+						|| (95<event.keyCode && event.keyCode<106)
+						|| (event.keyCode==8) || (event.keyCode==9)
+						|| (event.keyCode>34 && event.keyCode<40)
+						|| (event.keyCode==46) )">
+                <p style="color: #cccccc; margin-top: 1px">Amount of virtual currency to give user for every $1 earned.</p>
+                <p id="errormain" style="color: red; display: none"></p>
+                <input type="hidden" id="oid1">
+            </div>
+        </div>
+        <div style="padding: 25px; border-top: 1px solid #ebedf2; display: flex; justify-content: space-between">
+            <button id="del1" class="button click lang" onclick="savew($(this), 'del')" style="margin: 5px; display: inline-block">Delete</button>
+            <div>
+                <button id="o_end" class="button click lang" onclick="savew($(this))" style="margin: 5px; display: inline-block">Save</button>
+                <button class="button click lang" onclick="location.href = '/offerwalls'" style="margin: 5px; display: inline-block">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="myModal0a" class="modal">
+        <div class="modal-content" style="width: max-content">
+            <div class="modal-header">
+                <span class="close" onclick="myModal0a.style.display = 'none';$('#removeit').css('display', '');">&times;</span>
+                <h2 class="lang">Test Postback</h2>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div style="max-width: 500px; margin-bottom: 25px; margin-left: 35px; margin-right: 50px">
+                    <p>*UserID</p>
+                    <input class="input" placeholder="user321" id="puser">
+                    <p>*IP Address</p>
+                    <input class="input" placeholder="123.123.123.123" id="pip">
+                    <p>*Revenue</p>
+                    <input class="input" placeholder="5" id="prev">
+                    <p>*Reward</p>
+                    <input class="input" placeholder="3" id="prew">
+                </div>
+            <div class="modal-footer" style="text-align: right; width: 100%; padding: 0!important">
+                <div style="display: flex; justify-content: space-between; margin: 4px 16px">
+                    <button class="button click lang" onclick="testpost($(this))" style="margin: 10px">Send Postback</button>
+                    <button class="button click lang" onclick="myModal0a.style.display = 'none';$('#removeit').css('display', '');" style="margin: 10px">Close</button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block add_scripts %}
+    <script>
+        var myModal0a = document.getElementById("myModal0a");
+         window.onclick = function(event) {
+             if (event.target === myModal0a) {
+                 myModal0a.style.display = "none";
+                 $('#removeit').css('display', '');
+             }
+         }
+
+        function makeid(length) {
+           var result           = '';
+           var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+           var charactersLength = characters.length;
+           for ( var i = 0; i < length; i++ ) {
+              result += characters.charAt(Math.floor(Math.random() * charactersLength));
+           }
+           return result;
+        }
+
+        {% if new == True %}
+         newwall()
+        {% else %}
+            edit('{{ data.id }}', '{{ data.name }}', '{{ data.postback }}', '{{ data.secret }}', '{{ data.currency_name }}', '{{ data.currencys_name }}', '{{ data.currency_abr }}', '{{ data.currency_mult }}')
+        {% endif %}
+
+        function edit(oid1, appname, postback, serc, curname, cursname, abr, multi){
+            postback = postback.replace(/&amp;/g, '&');
+            $('#oid1').val(oid1)
+            $('#editapp').text(appname)
+            $('#appname').val(appname)
+            $('#postback').val(postback)
+            $('#cur_name').val(curname)
+            $('#curs_name').val(cursname)
+            $('#cura_name').val(abr)
+            $('#cur_multi').val(multi)
+            $('#serc1').text(serc)
+            $('#serc2').text(serc)
+            $('#o_title').text('Edit Offerwall:')
+            $('#o_end').text('Save')
+            $('#del1').css('color', 'white').css('background-color', '#0F9E5E').removeClass('bbutton')
+
+        }
+        function newwall(){
+            $('#o_title').text('Create Offerwall')
+            $('#o_end').text('Finish')
+            $('#editapp').text('')
+            $('#appname').val('')
+            $('#oid1').val('null')
+            window.secret = makeid(35)
+            $('#serc1').text(window.secret)
+            $('#serc2').text(window.secret)
+            $('#del1').css('color', 'white').css('background-color', 'white').addClass('bbutton')
+        }
+        function savew(e, del1=''){
+            e.attr("disabled","disabled");
+		    var gg = $('#errormain')
+			gg.css('display', 'none')
+		    $.ajax({
+				type: "POST",
+				url: "/offerwalls",
+				data: {
+					csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    id1: $('#oid1').val(),
+                    name: $('#appname').val(),
+                    postback: $('#postback').val(),
+                    curname: $('#cur_name').val(),
+                    cursname: $('#curs_name').val(),
+                    curaname: $('#cura_name').val(),
+                    curmulti: $('#cur_multi').val(),
+                    serc: $('#serc1').text(),
+                    del1: del1
+				},
+				success: function(result) {
+					if(result.status === "success")
+					{
+						location.href = '/offerwalls'
+					}
+					else
+					{
+					    //alert(result.message)
+						gg.css('display', '')
+						gg.text(result.message)
+					}
+				}
+			})
+			e.removeAttr("disabled");
+        }
+        function testpost(e){
+            e.attr("disabled","disabled");
+		    var gg = $('#rect1')
+			gg.css('display', 'none')
+            gg.html('')
+		    $.ajax({
+				type: "POST",
+				url: "/postback",
+				data: {
+					csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    postback: $('#postback').val(),
+                    user: $('#puser').val(),
+                    ip: $('#pip').val(),
+                    reven: $('#prev').val(),
+                    reward: $('#prew').val(),
+                    secret: '{{ data.secret }}'
+				},
+				success: function(result) {
+					if(result.status === "success")
+					{
+					    myModal0a.style.display = 'none';
+					    gg.text('Success!')
+						gg.css('color', 'green').css('display', '')
+					}
+					else
+					{
+					    myModal0a.style.display = 'none';
+					    gg.html('Status: '+result.statusc + '<br>Response: '+result.message)
+                        gg.css('color', 'red').css('display', '')
+					}
+				}
+			})
+			e.removeAttr("disabled");
+        }
+
+    </script>
+{% endblock %}

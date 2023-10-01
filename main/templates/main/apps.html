@@ -1,0 +1,44 @@
+{% extends "main/header.html" %}
+{% load static %}
+
+{% block header %}
+	<link rel="stylesheet" href="{% static 'css/apps.css' %}" type="text/css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+    <div class="" style="background-color: white; max-width: 100%; text-align: left; margin: 30px; padding-top: 20px; padding-bottom: 35px; margin-bottom: 60px; border-radius: 5px">
+        <h2 style="padding-bottom: 20px; border-bottom: 1px solid #ebedf2; padding-left:  30px; margin: 0">Your Offerwalls</h2>
+        <div style="padding: 30px;">
+            <div style="text-align: right; margin-bottom: 25px">
+                <button onclick="location.href= '/edit?id=newwall'" style="border-radius: 60px; font-size: 18px; padding: 8px 20px; border: 0; color: white; background-color: #0F9E5E;" class="click"><i class="fa fa-plus-circle"></i> New Offerwall</button>
+            </div>
+            <div style="text-align: left">
+                <table style="width: 100%; border-collapse: collapse">
+                <tr style="">
+                    <th>Offerwall ID</th>
+                    <th>Name</th>
+                    <th>Url</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+                {% for wall in walls %}
+                    <tr >
+                        <td>{{ wall.id }}</td>
+                        <td>{{ wall.name }}</td>
+                        <td>https://offerble.com/wall?id={{ wall.id }}&user=USERIDHERE</td>
+                        <td>{{ wall.created }}</td>
+                        <td><button class="click button" onclick="location.href= '/edit?id={{ wall.id }}'">Edit</button></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block add_scripts %}
+    <script>
+    </script>
+{% endblock %}

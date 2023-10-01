@@ -1,0 +1,251 @@
+@font-face {
+    font-family: 'AvertaCY-Regular';
+    src: url("../css/AvertaCY-Regular.woff");
+}
+@media screen and (max-width: 1000px) {
+    #flexcol{
+        display: table!important;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    #flexcol div{
+        width: auto !important;
+    }
+    .hideit{
+        display: none;
+    }
+    ul{
+        justify-content: left;
+    }
+    #maincontent{
+        flex-direction: column;
+    }
+    #leftcontent{
+        max-width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        margin: 25px;
+
+    }
+    #leftcontent-1{
+        margin: auto;
+    }
+    #leftcontent-1 h1{
+        max-width: 300px; font-size: 30px
+    }
+    #leftcontent-1 h2{
+        max-width: 300px; font-size: 25px
+    }
+    #rightcontent{
+        width: 100%;
+        height: 50%;
+    }
+    #rightcontent-1{
+        width: 184px;
+        height: 510px;
+        position: relative;
+        bottom: -.27em;
+        left: 8vw;
+    }
+    .button{
+        font-size: 18px;
+    }
+    #secondcontent-left{
+        width: 50%;
+        text-align: center;
+        margin: auto;
+    }
+    #secondcontent-right{
+        width: 100%;
+        text-align: center;
+    }
+    #howworks{
+        margin: 20px auto 20px auto;
+    }
+    #s_m{
+        margin-left:auto;
+    }
+}
+
+@media not screen and (max-width: 1000px) {
+    #flexit{
+        display: flex;
+    }
+    #howworks{
+        margin: 55px auto 50px auto;
+    }
+    .mobile{
+        display: none;
+    }
+    .button{
+        font-size: 20px;
+    }
+    #leftcontent-1 h1{
+        max-width: 400px; font-size: 45px
+    }
+    #leftcontent-1 h2{
+        max-width: 400px; font-size: 34px
+    }
+    ul{
+        justify-content: center;
+    }
+    #maincontent{
+        height: 1095px;max-height: 85vh;
+    }
+    #leftcontent{
+        width: 55%; height: 100%;display: inline-block;position: relative;
+    }
+    #rightcontent{
+        height: 100%; width: 45%;display: inline-block;
+    }
+    #leftcontent-1{
+        position: absolute; bottom: 24vh; left: 12vw;
+    }
+    #rightcontent-1{
+        /*left: -33%; bottom: 0;position: absolute; width: 43rem; max-width: 31vw; height: 46em; max-height: 65vh;width: 43rem; max-width: 31vw; height: 46em; max-height: 65vh;*/
+        max-height: 80%;
+        max-width: 80%;
+        position: relative;
+        bottom: -12vh;
+        left: 7vw;
+    }
+    #secondcontent-left{
+        width: 50%; display: inline-block; vertical-align: middle
+    }
+    #secondcontent-right{
+        width: 50%; display: inline-block; vertical-align: middle
+    }
+}
+
+
+
+html, body{
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+    font-family: AvertaCY-Regular,Helvetica,Arial,sans-serif;;
+    background-color: #36393f;
+    overflow-x: hidden;
+}
+
+header{
+    background-color: #36393f;
+}
+.content{
+    margin-top: 90px;
+}
+
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 9999999;
+}
+
+
+
+ul{
+    text-align: right; padding: 0; margin: 0;
+    text-decoration: none;display: flex;align-items: center;
+}
+header li{
+    display: inline-block;
+    margin: 10px 18px 10px 18px;
+    vertical-align: middle;
+}
+header a{
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+}
+.main_col{
+    color: #44af60;
+}
+
+.button{
+    border: 0;
+    background-color: #44af60;
+    color: white;
+    padding: 8px 36px;
+    vertical-align: middle;
+    display: block;
+}
+
+
+
+.shadow{
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+}
+.click:hover{
+    cursor: pointer;
+}
+
+
+#secondcontent{
+    display: flex;
+    flex-direction: column;
+}
+
+footer{
+    background-color: #36393f;
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 15px;
+}
+footer a{
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin: 5px 0 5px 0;
+    font-size: 16px;
+}
+footer h3{
+    font-size: 26px;
+}
+footer div{
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 50px 0 50px;
+    text-align: left;
+}
+
+button:hover{
+    background-color: #3b9653!important;
+}
+
+*,*:focus,*:hover{
+    outline:none;
+}
+
+.shadowsmall{
+	-webkit-box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);
+	box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);
+}
+
+.texto{
+    transition: all .2s ease-in-out;
+}
+.texto2{
+    transition: all .2s ease-in-out;
+}
+
+footer a:hover{
+    color: #c4c4c4!important;
+}
+
+header a:hover{
+    color: #c4c4c4
+}
+
+header #home1:hover{
+    color: #388f4e
+}
+
+button{
+    border-radius: 5px!important;
+}

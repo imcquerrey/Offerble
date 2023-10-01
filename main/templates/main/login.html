@@ -1,0 +1,274 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Offerble - Publisher Login</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'imgs/favicon.ico' %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    {% csrf_token %}
+</head>
+<body>
+    <header class="sticky" id="navbar">
+        <ul>
+            <li style="margin-left: 60px"><img style="width: 225px; height: 70px;; display: inline-block; vertical-align: middle" src="{% static 'imgs/logo.png' %}"></li>
+            <li class="hideit" style="margin-left: auto;"><a id="home1" class="main_col" href="/">Home</a></li>
+            <li class="hideit"><a href="mailto:support@offerble.com">Contact</a></li>
+            <li class="hideit"><a href="/login">Login</a></li>
+            <li class="hideit" style="margin-right: 60px"><button class="button click" onclick="location.href = '/register'">Register</button></li>
+        </ul>
+    </header>
+    <div class="content">
+        <div id="login">
+            <div class="shadow" style="background-color: white; max-width: 400px; padding: 30px 65px; margin: auto; text-align: center; margin-top: 150px; border-radius: 5px">
+                <h2>Welcome back!</h2>
+                <h4 style="font-weight: normal; color: grey">Enter in your account details to access the dashboard</h4>
+                <div><input placeholder="Email" class="input" id="username"></div>
+                <input type="password" placeholder="Password" class="input" id="password">
+                <button id="m_login" class="g-recaptcha button click" style="margin: 25px auto auto auto; width: 200px"
+                data-sitekey="6LcNT94ZAAAAALaBxW7fXXUMDltDKBvBxTUuf6u6"
+                data-callback='onSubmit'
+                data-action='submit' data-badge="inline"
+
+                >Log in</button>
+                <p style="display: none; color: red;" id="error-msg1"></p>
+                <small style="color: black; display: none; margin-bottom: 15px; margin-top: 15px">This site is protected by reCAPTCHA and the Google
+					<a style="color: #2F80ED" href="https://policies.google.com/privacy">Privacy Policy</a> and
+					<a style="color: #2F80ED" href="https://policies.google.com/terms">Terms of Service</a> apply.
+				</small>
+            </div>
+            <div style="color: white; margin: auto; text-align: center; max-width: 530px; display: flex; justify-content: space-between">
+                <p style="margin-left: 5px" onclick="regist()" class="click">Sign up here</p>
+                <p style="margin-right: 5px" onclick="forgot()" class="click">Forgot your password?</p>
+            </div>
+        </div>
+        <div id="register" style="display: none">
+            <div class="shadow" style="background-color: white; max-width: 400px; padding: 30px 65px; margin: auto; text-align: center; margin-top: 150px; border-radius: 5px">
+                <h2>Register</h2>
+                <h4 style="font-weight: normal; color: grey">Create your account below to gain access to the dashboard</h4>
+                <div><input placeholder="Website" class="input" id="website"></div>
+                <div><input placeholder="Full Name" class="input" id="fullname"></div>
+                <div><input placeholder="Email" class="input" id="username2"></div>
+                <input type="password" placeholder="Password" class="input" id="password2">
+                <input type="password" placeholder="Confirm Password" class="input" id="password24">
+                <button class="button click" style="margin: 25px auto auto auto; width: 200px" onclick="register($(this))">Submit</button>
+                <p style="display: none; color: red;" id="error-msg"></p>
+            </div>
+            <div style="color: white; margin: auto; text-align: center; max-width: 530px; display: flex; justify-content: space-between">
+                <p style="margin-left: 5px" onclick="logi()" class="click">Log in here</p>
+                <p style="margin-right: 5px" onclick="forgot()" class="click">Forgot your password?</p>
+            </div>
+        </div>
+        <div id="forgot" style="display: none">
+            <div class="shadow" style="background-color: white; max-width: 400px; padding: 30px 65px; margin: auto; text-align: center; margin-top: 150px; border-radius: 5px">
+                <h2>Forgot Password</h2>
+                <h4 style="font-weight: normal; color: grey">Enter in your account email to recieve a confirmation email to reset your password</h4>
+                <div><input placeholder="Email" class="input" id="username3"></div>
+                <button class="button click" style="margin: 25px auto auto auto; width: 200px" onclick="forgot1($(this))">Submit</button>
+                <p style="display: none; color: red;" id="error-msg2"></p>
+            </div>
+            <div style="color: white; margin: auto; text-align: center; max-width: 530px; display: flex; justify-content: space-between">
+                <p style="margin-left: 5px" onclick="regist()" class="click">Sign up here</p>
+                <p style="margin-right: 5px" onclick="logi()" class="click">Log in here</p>
+            </div>
+        </div>
+        <div id="reset" style="display: none">
+            <div class="shadow" style="background-color: white; max-width: 400px; padding: 30px 65px; margin: auto; text-align: center; margin-top: 150px; border-radius: 5px">
+                <h2>Reset Password</h2>
+                <div><input type="password" placeholder="New Password" class="input" id="password3"></div>
+                <button class="button click" style="margin: 25px auto auto auto; width: 200px" onclick="reset($(this))">Submit</button>
+                <p style="display: none; color: red;" id="error-msg21"></p>
+            </div>
+            <div style="color: white; margin: auto; text-align: center; max-width: 530px; display: flex; justify-content: space-between">
+                <p style="margin-left: 5px" onclick="regist()" class="click">Sign up here</p>
+                <p style="margin-right: 5px" onclick="logi()" class="click">Log in here</p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div style="display: block; text-align: center">
+            <div>
+            <h3>Solutions</h3>
+            <a href="/register">Monetize</a>
+            <a href="mailto:support@offerble.com">Advertise</a>
+            </div>
+            <div>
+                <h3>Contact Us</h3>
+                <a href="mailto:support@offerble.com">Email</a>
+            </div>
+            <div>
+                <h3>Legal</h3>
+                <a class="click" href="/privacy">Terms of Service</a>
+                <a class="click" href="/privacy">Privacy Policy</a>
+            </div>
+        </div>
+        <p style="font-size: 16px; margin-top: 25px">© Offerble 2020</p>
+    </footer>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180666088-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-180666088-1');
+    </script>
+    <script>
+        window.onscroll = function() {myFunction()};
+        var navbar = document.getElementById("navbar");
+        function myFunction() {
+          if (window.pageYOffset > 0) {
+            navbar.classList.add("shadow")
+          } else {
+            navbar.classList.remove("shadow");
+          }
+        }
+        if ("{{ reg }}" === "True"){
+            $('#register').css('display', '')
+            $('#login').css('display', 'none')
+        }
+        if ("{{ reset_id }}".length > 1){
+            $('#login').css('display', 'none')
+            $('#reset').css('display', '')
+        }
+        function logi(){
+            $('#register').css('display', 'none')
+            $('#login').css('display', '')
+            $('#forgot').css('display', 'none')
+        }
+        function regist(){
+            $('#register').css('display', '')
+            $('#login').css('display', 'none')
+            $('#forgot').css('display', 'none')
+        }
+        function forgot(){
+            $('#register').css('display', 'none')
+            $('#login').css('display', 'none')
+            $('#forgot').css('display', '')
+        }
+    </script>
+    <script>
+        function register(e) {
+		    e.attr("disabled","disabled");
+		    var gg = $('#error-msg')
+			gg.css('display', 'none')
+            if ($('#password2').val() !== $('#password24').val()){
+                gg.css('display', '')
+                gg.text('Passwords do not match')
+                return;
+            }
+		    $.ajax({
+				type: "POST",
+				url: "/login",
+				data: {
+					csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    method: 'register',
+					user: $('#username2').val(),
+                    password: $('#password2').val(),
+                    fullname: $('#fullname').val(),
+                    website: $('#website').val(),
+				},
+				success: function(result) {
+					if(result.status === "success")
+					{
+						location.href = '/dashboard'
+					}
+					else
+					{
+						gg.css('display', '')
+						gg.text(result.message)
+					}
+				}
+			})
+			e.removeAttr("disabled");
+        }
+        function login(e, token) {
+		    e.attr("disabled","disabled");
+		    var gg = $('#error-msg1')
+			gg.css('display', 'none')
+		    $.ajax({
+				type: "POST",
+				url: "/login",
+				data: {
+					csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    method: 'login',
+					user: $('#username').val(),
+                    password: $('#password').val(),
+                    token: token,
+				},
+				success: function(result) {
+					if(result.status === "success")
+					{
+						location.href = '/dashboard'
+					}
+					else
+					{
+						gg.css('display', '')
+						gg.text(result.message)
+					}
+				}
+			})
+			e.removeAttr("disabled");
+        }
+        function forgot1(e) {
+		    e.attr("disabled","disabled");
+		    var gg = $('#error-msg2')
+			gg.css('display', 'none')
+		    $.ajax({
+				type: "POST",
+				url: "/login",
+				data: {
+					csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    method: 'forgot',
+					user: $('#username3').val(),
+                    password: $('#password').val()
+				},
+				success: function(result) {
+					if(result.status === "success")
+					{
+						gg.css('display', '').css('color', 'green')
+						gg.text(result.message)
+					}
+					else
+					{
+						gg.css('display', '').css('color', 'red')
+						gg.text(result.message)
+					}
+				}
+			})
+			e.removeAttr("disabled");
+        }
+        function reset(e) {
+		    e.attr("disabled","disabled");
+		    var gg = $('#error-msg21')
+			gg.css('display', 'none')
+		    $.ajax({
+				type: "POST",
+				url: "/reset_password/",
+				data: {
+					csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    newpassword: $('#password3').val(),
+                    id1: "{{ reset_id }}"
+				},
+				success: function(result) {
+					if(result.status === "success")
+					{
+						location.href = '/login'
+					}
+					else
+					{
+						gg.css('display', '').css('color', 'red')
+						gg.text(result.message)
+					}
+				}
+			})
+			e.removeAttr("disabled");
+        }
+        function onSubmit(token) {
+			login($('#m_login'), token)
+	   	}
+    </script>
+</body>
+</html>

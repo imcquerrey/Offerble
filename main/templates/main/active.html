@@ -1,0 +1,153 @@
+{% extends "main/header.html" %}
+{% load static %}
+
+{% block header %}
+	<link rel="stylesheet" href="{% static 'css/apps.css' %}" type="text/css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script src="https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.min.js"></script>
+    {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+    <div class="" style="background-color: white; max-width: 100%; text-align: left; margin: 30px; padding-top: 20px; padding-bottom: 35px; margin-bottom: 60px; border-radius: 5px">
+        <h2 style="padding-bottom: 20px; border-bottom: 1px solid #ebedf2; padding-left:  30px; margin: 0">Active Offers</h2>
+        <div style="padding: 30px;">
+            <div style="margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="width: 300px; display: inline-block"><input id="searcch" class="input" placeholder="Search"></div>
+                    <button id="searcch1" style="display: inline-block; border-radius: 60px; font-size: 18px; padding: 8px 20px; border: 0; color: white; margin-left: 10px; background-color: #0F9E5E; min-width: 100px" class="click">Search</button>
+                </div>
+                <div style="position: relative">
+                    <button onclick="save1($(this))" style="border-radius: 60px; font-size: 18px; padding: 8px 20px; border: 0; color: white; background-color: #0F9E5E; min-width: 100px" class="click">Save</button>
+                    <p id="errp" style="position: absolute; max-width: 300px; display: none; left: 25px"></p>
+                </div>
+            </div>
+            <div style="text-align: left">
+                <table style="width: 100%; border-collapse: collapse; white-space: normal">
+                <tr style="">
+                    <th>IMG</th>
+                    <th>Offer Name</th>
+                    <th>Requirements</th>
+                    <th>Payout</th>
+                    <th>Countries</th>
+                    <th>Featured</th>
+                </tr>
+                {% for offer in offers %}
+                    <tr class="off1">
+                        <td><img loading="lazy" width="40" height="40" class="oimg" src="{{ offer.pic }}"></td>
+                        <td class="oname" style="max-width: 250px">{{ offer.name }}</td>
+                        <td><p style="max-width: 300px; word-wrap: break-word">{{ offer.requirements }}</p></td>
+                        <td>${{ offer.reward }}</td>
+                         <td style="max-width: 200px">{{ offer.countries }}</td>
+                        {% if offer.fea == 2 %}
+                            <td><div style="max-width: 200px"><label>
+                                <input data-val="{{ offer.id }}" data-old="{{ offer.featured }}" class="input double input2" type="checkbox" checked="checked" name="{{ offer.mn }}">
+                            </label></div></td>
+                        {% else %}
+                            <td><div style="max-width: 200px"><label>
+                                <input data-val="{{ offer.id }}" data-old="{{ offer.featured }}" class="input double input2" type="checkbox" name="{{ offer.mn }}">
+                            </label></div></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block add_scripts %}
+    <script>
+
+
+
+        window.go = false
+        function show25(i1 = 0){
+            var newi = i1+25
+            var i12 = 0;
+             $(".off1").each(function (index) {
+                 $(this).removeClass('nowshow')
+                 if ($(this).css('display') !== 'none'){
+                     if (i12 > newi){
+                         $(this).addClass('nowshow')
+                     }
+                     i12++;
+
+                 }
+                  if (i12 > newi &&  window.go === true){
+                      return false;
+                  }
+
+             });
+             window.pos1 = newi
+            window.go = true
+        }
+
+        window.act = false
+        window.pos1 = 0;
+        function createATimeout() {
+          var duration = Math.floor(Math.random() * 2500) + 1; // b/w 1 and 6
+          setTimeout(function() {
+                runthis();
+          }, duration);
+         }
+
+        $(window).on('scroll',function() {
+            if ($(window).scrollTop() + 300 >= $(document).height() - $(window).height() && window.act === false) {
+                window.act = true
+                show25(window.pos1);
+                window.act = false;
+            }
+        });
+
+        show25();
+        $('#searcch1').on('click', function() {
+            var vel1 = $('#searcch').val().toLowerCase()
+            $('.off1').each(function(i, obj) {
+                var title = $(this).find('.oname').text().toLowerCase()
+                if (title.indexOf(vel1) < 0){
+                    $(this).css('display', 'none')
+                }
+                else{
+                    $(this).css('display', '')
+                }
+            });
+            show25();
+        });
+
+        function save1(e){
+            var featr ={}
+            $('.input2').each(function(i, obj) {
+                if ($(this).attr('data-old').toLowerCase() !== $(this).is(':checked').toString()){
+                    console.log($(this).attr('data-old').toLowerCase())
+                    console.log($(this).is(':checked').toString())
+                    featr[$(this).attr('data-val')] = $(this).is(':checked')
+                }
+
+            });
+            var gg = $('#errp')
+            gg.css('display', '')
+            $.ajax({
+                type: "POST",
+                url: "/active",
+                data: {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    feat: JSON.stringify(featr)
+                },
+                success: function(result) {
+                    if(result.status === "success")
+                    {
+                        gg.css('display', '').css('color', 'green')
+                        gg.text(result.message)
+                    }
+                    else
+                    {
+                        gg.css('display', '').css('color', 'red')
+                        gg.text(result.message)
+                    }
+                }
+            })
+            e.removeAttr("disabled");
+            }
+    </script>
+{% endblock %}

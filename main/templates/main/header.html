@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Offerble - Publisher Dashboard</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'imgs/favicon.ico' %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/icns.css' %}" type="text/css"/>
+    {% block header %}
+    {% endblock %}
+    {% csrf_token %}
+</head>
+<body>
+    <ul class="shadow">
+        <li style=""><img style="width: 200px; height: 60px;margin: 5px 0 5px 5px;" src="{% static 'imgs/logo.png' %}"></li>
+        <li style="margin-top: 27px"><a href="/dashboard"><i class="flaticon-squares-4"></i> Dashboard</a></li>
+        <li><a href="/offerwalls"><i class="flaticon-web"></i> Offerwalls</a></li>
+        <li><a href="/reports"><i class="flaticon-diagram"></i> Reports</a></li>
+        <li><a href="/active"><i class="flaticon-list"></i> Active Offers</a></li>
+        <li><a href="/payments"><i class="flaticon-coins"></i> Payments</a></li>
+        <li><a href="mailto:support@offerble.com"><i class="flaticon-lifebuoy"></i> Support</a></li>
+    </ul>
+    <div style="margin-left:16em;min-height: 100vh; z-index: 99999999999; position: relative">
+        <div style="width: 100%; text-align: right; background-color: white" class="shadow">
+            <p class="main_col" style="margin-top: 0; padding: 24px 30px 24px 0"><span class="click" onclick="location.href = '/profile'">{{ request.session.email }}</span> <img onclick="location.href='/logout'" style="margin: 0 0 0 15px" class="head-ico click" src="{% static 'imgs/logout.svg' %}"></p>
+        </div>
+        {% block content %}
+	    {% endblock %}
+        <footer id="removeit" style="color: white; text-align: right; margin-right: 15px;position: absolute; bottom: 10px;right: 0; margin-top: 35px">
+            <a style="margin: 5px; text-decoration: none; color: white" class="click" href="/privacy">Privacy Policy</a>
+            <a style="margin: 5px;text-decoration: none; color: white " class="click" href="/privacy">Terms of Service</a>
+        </footer>
+    </div>
+    {% block add_scripts %}
+	{% endblock %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180666088-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-180666088-1');
+    </script>
+</body>
+</html>

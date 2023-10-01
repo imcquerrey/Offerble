@@ -1,0 +1,411 @@
+{% extends "main/header.html" %}
+{% load static %}
+
+{% block header %}
+	<link rel="stylesheet" href="{% static 'css/payments.css' %}" type="text/css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+    <div class="" style="background-color: white; max-width: 100%; text-align: left; margin: 30px; padding-top: 20px; padding-bottom: 35px; margin-bottom: 60px; border-radius: 5px">
+        <h2 style="padding-bottom: 20px; border-bottom: 1px solid #ebedf2; padding-left:  30px; margin: 0">Current Balance: <span class="main_col">$<span id="m_bal">{{ bal }}</span></span><br><span style="color: grey; font-size: 10px">Note: Payments are sent everyday by 10:00 PM EST</span></h2>
+        <div style="padding: 30px;">
+            <div style="display: flex; justify-content: space-between; flex-wrap: wrap">
+                <div style="max-width: 600px">
+                <div class="payments">
+                    <label onclick="bitcoin()" class="container">Bitcoin
+                      <input type="radio" checked="checked" name="radio" value="btc">
+                      <span class="checkmark"></span>
+                    </label>
+                    <label onclick="zelle()" class="container">Zelle
+                      <input type="radio" name="radio" value="zelle">
+                      <span class="checkmark"></span>
+                    </label>
+                    <label onclick="wire()" class="container">Wire Transfer
+                      <input type="radio" name="radio" value="wire">
+                      <span class="checkmark"></span>
+                    </label>
+                </div>
+                <h2 style="margin-top: 35px">Payment Details</h2>
+                <div id="p_bitcoin">
+                     <p>*Address</p>
+                    <input class="input" placeholder="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" id="addy">
+                </div>
+                <div id="p_zelle" style="display: none">
+                    <p style="color: grey;font-size: 15px">Maximum withdraw $2,500</p>
+                     <p>*Email</p>
+                    <input class="input" placeholder="johndoe@gmail.com" id="email">
+                </div>
+                <div id="p_wire" style="display: none">
+                    <div class="payments">
+                        <label onclick="us1()" class="container">United States
+                          <input type="radio" checked="checked" name="radio2" value="us">
+                          <span class="checkmark"></span>
+                        </label>
+                        <label onclick="intern()" class="container">International
+                          <input type="radio" name="radio2" value="intr">
+                          <span class="checkmark"></span>
+                    </label>
+                    </div>
+                    <div id="wirea">
+                        <p style="color: grey;font-size: 15px">Minimum withdraw $1,000</p>
+                        <p>*First Name</p>
+                        <input class="input" placeholder="John" id="fname">
+                        <p>*Last Name</p>
+                        <input class="input" placeholder="Doe" id="lname">
+                        <p>*Address</p>
+                        <input class="input" placeholder="111 Nice St." id="address">
+                        <p>*State</p>
+                        <input class="input" placeholder="NY" id="state">
+                        <p>*City</p>
+                        <input class="input" placeholder="Albany" id="city">
+                        <p>*Zip Code</p>
+                        <input class="input" placeholder="12084" id="zip">
+                        <p>*Email</p>
+                        <input class="input" placeholder="johndoe@gmail.com" id="w_email">
+                        <p>*Account Type</p>
+                        <div id="acctype" class="custom-select" style="width:135px;line-height: normal">
+
+                        </div>
+                    </div>
+                     <div id="us1">
+                        <p>*Routing Number</p>
+                        <input class="input" placeholder="321321321321" id="rnum">
+                        <p>*Account Number</p>
+                        <input class="input" placeholder="321321321312" id="anum">
+                     </div>
+                    <div id="intern" style="display: none;">
+                        <p>*Country</p>
+                        <input class="input" placeholder="UK" id="country">
+                        <p>*Currency</p>
+                        <input class="input" placeholder="Pound" id="currency">
+                        <p>*Bank Identification Number</p>
+                        <input class="input" placeholder="321321321" id="bid">
+                    </div>
+                </div>
+                <p>Amount</p>
+                <input class="input" placeholder="5.00" id="amount">
+
+                <div>
+                    <button class="button click" style="font-size: 18px; margin-top: 25px; display: inline-block" onclick="payout($(this), 'am')">Request Payout</button>
+                    <button class="button click" style="font-size: 18px; margin-top: 25px; display: inline-block" onclick="savez($(this))">Save Details</button>
+                    <!--<button class="button click" style="font-size: 18px; margin-top: 25px; display: inline-block" onclick="payout($(this), 'all')">Request All</button>-->
+                </div>
+                <p id="error-msg1"></p>
+            </div>
+                <div style="margin-right: 50px">
+                    <h2>Invoices</h2>
+                    <div id="invoices">
+                        {% for x in invoices %}
+                        <div class="inv1">
+                            <p style="display: inline-block">Status: {{ x.status }}</p>
+                            <p style="display: inline-block">Amount: {{ x.amount }}</p>
+                            <p style="display: inline-block">Method: {{ x.method.upper }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block add_scripts %}
+    <script>
+    function payout(e, all1){
+        e.attr("disabled","disabled");
+        var gg = $('#error-msg1')
+        gg.css('display', 'none')
+        var method = $("input:radio[name='radio']:checked").val()
+        var amount;
+        if (all1 === 'all'){
+            amount = 'all';
+        }
+        else{
+            amount = $('#amount').val();
+        }
+        var email;
+        if (method === 'wire'){
+            method = $("input:radio[name='radio2']:checked").val()
+            email = $("#w_email").val()
+        }
+        else{
+            email = $("#email").val()
+        }
+        $.ajax({
+            type: "POST",
+            url: "/payments",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                save: "False",
+                method: method,
+                amount: amount,
+                email: email,
+                addy: $('#addy').val(),
+                fname: $('#fname').val(),
+                lname: $('#lname').val(),
+                address: $('#address').val(),
+                state: $('#state').val(),
+                city: $('#city').val(),
+                zipc: $('#zip').val(),
+                rnum: $('#rnum').val(),
+                anum: $('#anum').val(),
+                acctype: $('.same-as-selected').text(),
+                country: $('#country').val(),
+                currency: $('#currency').val(),
+                biztype: $('#biztype').val(),
+                bid1: $('#bid').val(),
+            },
+            success: function(result) {
+                if(result.status === "success")
+                {
+                    gg.css('display', '').css('color', 'green')
+                    gg.text(result.message)
+                    $('#m_bal').text(result.bal)
+                    $('#invoices').append(`
+                        <div class="inv1">
+                            <p style="display: inline-block">Status: Pending</p>
+                            <p style="display: inline-block">Amount: `+ result.amount + `</p>
+                            <p style="display: inline-block">Method: `+ method.toUpperCase() + `</p>
+                        </div>
+                    `)
+                }
+                else
+                {
+                    gg.css('display', '').css('color', 'red')
+                    gg.text(result.message)
+                }
+            }
+        })
+        e.removeAttr("disabled");
+    }
+    function savez(e){
+        e.attr("disabled","disabled");
+        var gg = $('#error-msg1')
+        gg.css('display', 'none')
+        var method = $("input:radio[name='radio']:checked").val()
+        var amount = 0;
+        var email;
+        if (method === 'wire'){
+            method = $("input:radio[name='radio2']:checked").val()
+            email = $("#w_email").val()
+        }
+        else{
+            email = $("#email").val()
+        }
+        $.ajax({
+            type: "POST",
+            url: "/payments",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                save: 'True',
+                method: method,
+                amount: amount,
+                email: email,
+                addy: $('#addy').val(),
+                fname: $('#fname').val(),
+                lname: $('#lname').val(),
+                address: $('#address').val(),
+                state: $('#state').val(),
+                city: $('#city').val(),
+                zipc: $('#zip').val(),
+                rnum: $('#rnum').val(),
+                anum: $('#anum').val(),
+                acctype: $('.same-as-selected').text(),
+                country: $('#country').val(),
+                currency: $('#currency').val(),
+                biztype: $('#biztype').val(),
+                bid1: $('#bid').val(),
+            },
+            success: function(result) {
+                if(result.status === "success")
+                {
+                    gg.css('display', '').css('color', 'green')
+                    gg.text(result.message)
+                }
+            }
+        })
+        e.removeAttr("disabled");
+    }
+
+    $("#email").val('')
+    $("#w_email").val('')
+    $("#amount").val('')
+    $('#addy').val('')
+    $('#fname').val('')
+    $('#lname').val('')
+    $('#address').val('')
+    $('#state').val('')
+    $('#city').val('')
+    $('#zip').val('')
+    $('#rnum').val('')
+    $('#anum').val('')
+    $('#acctype').html(`
+        <select class="acctype">
+            <option value="0" selected>Personal</option>
+            <option value="0" selected>Personal</option>
+            <option value="1">Business</option>
+        </select>
+    `)
+    $('#country').val('')
+    $('#currency').val('')
+    $('#biztype').val('')
+    $('#bid').val('')
+
+    {% for x in saved %}
+        {% if x.method == 'btc' %}
+            $('#addy').val('{{ x.address }}')
+        {% elif x.method == 'zelle' %}
+            $('#email').val('{{ x.email }}')
+        {% elif x.method == 'wire' and x.international == False %}
+            $('#fname').val('{{ x.firstname }}')
+            $('#lname').val('{{ x.lastname }}')
+            $('#address').val('{{ x.street_addr }}')
+            $('#state').val('{{ x.state }}')
+            $('#city').val('{{ x.city }}')
+            $('#zip').val('{{ x.zipcode }}')
+            $('#w_email').val('{{ x.email }}')
+            $('#rnum').val('{{ x.routing }}')
+            $('#anum').val('{{ x.acc_number }}')
+            $('#acctype').html(`
+                <select class="acctype">
+                    <option value="0" selected>{{ x.acc_type }}</option>
+                    <option value="0" selected>{{ x.acc_type }}</option>
+                    <option value="1">{{ x.opp }}</option>
+                </select>
+            `)
+        {% elif x.method == 'wire' and x.international == True %}
+             $('#fname').val('{{ x.firstname }}')
+            $('#lname').val('{{ x.lastname }}')
+            $('#address').val('{{ x.street_addr }}')
+            $('#state').val('{{ x.state }}')
+            $('#city').val('{{ x.city }}')
+            $('#zip').val('{{ x.zipcode }}')
+            $('#w_email').val('{{ x.email }}')
+            $('#country').val('{{ x.country }}')
+            $('#currency').val('{{ x.currency }}')
+            $('#bid').val('{{ x.bank_id }}')
+            $('#acctype').html(`
+                <select class="acctype">
+                    <option value="0" selected>{{ x.acc_type }}</option>
+                    <option value="0" selected>{{ x.acc_type }}</option>
+                    <option value="1">{{ x.opp }}</option>
+                </select>
+            `)
+
+        {% endif %}
+    {% endfor %}
+
+    function bitcoin(){
+        $('#p_bitcoin').css('display', 'block')
+        $('#p_zelle').css('display', 'none')
+        $('#p_wire').css('display', 'none')
+    }
+    function zelle(){
+        $('#p_bitcoin').css('display', 'none')
+        $('#p_zelle').css('display', 'block')
+        $('#p_wire').css('display', 'none')
+    }
+    function wire(){
+        $('#p_bitcoin').css('display', 'none')
+        $('#p_zelle').css('display', 'none')
+        $('#p_wire').css('display', 'block')
+    }
+    function intern(){
+        $('#intern').css('display', 'block')
+        $('#us1').css('display', 'none')
+    }
+    function us1(){
+        $('#intern').css('display', 'none')
+        $('#us1').css('display', 'block')
+    }
+    var ch1 = $("input:radio[name='radio']:checked").val()
+    if (ch1 === 'btc'){
+        bitcoin()
+    }
+    else if (ch1 === 'zelle'){
+        zelle()
+    }
+    else if (ch1 === 'wire'){
+        wire()
+    }
+    var ch2 = $("input:radio[name='radio2']:checked").val()
+    if (ch2 === 'us'){
+        us1()
+    }
+    else if (ch2 === 'intr'){
+        intern()
+    }
+    </script>
+    <script>
+        var x, i, j, l, ll, selElmnt, a, b, c;
+        x = document.getElementsByClassName("custom-select");
+        l = x.length;
+        for (i = 0; i < l; i++) {
+          selElmnt = x[i].getElementsByTagName("select")[0];
+          ll = selElmnt.length;
+          a = document.createElement("DIV");
+          a.setAttribute("class", "select-selected");
+          a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+          x[i].appendChild(a);
+          b = document.createElement("DIV");
+          b.setAttribute("class", "select-items select-hide");
+          for (j = 1; j < ll; j++) {
+            c = document.createElement("DIV");
+            c.innerHTML = selElmnt.options[j].innerHTML;
+            c.addEventListener("click", function(e) {
+                var y, i, k, s, h, sl, yl;
+                s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+                sl = s.length;
+                h = this.parentNode.previousSibling;
+                for (i = 0; i < sl; i++) {
+                  if (s.options[i].innerHTML == this.innerHTML) {
+                    s.selectedIndex = i;
+                    h.innerHTML = this.innerHTML;
+                    y = this.parentNode.getElementsByClassName("same-as-selected");
+                    yl = y.length;
+                    for (k = 0; k < yl; k++) {
+                      y[k].removeAttribute("class");
+                    }
+                    this.setAttribute("class", "same-as-selected");
+                    updateit();
+                    break;
+                  }
+                }
+                h.click();
+            });
+            b.appendChild(c);
+          }
+          x[i].appendChild(b);
+          a.addEventListener("click", function(e) {
+            e.stopPropagation();
+            closeAllSelect(this);
+            this.nextSibling.classList.toggle("select-hide");
+            this.classList.toggle("select-arrow-active");
+          });
+        }
+
+        function closeAllSelect(elmnt) {
+          var x, y, i, xl, yl, arrNo = [];
+          x = document.getElementsByClassName("select-items");
+          y = document.getElementsByClassName("select-selected");
+          xl = x.length;
+          yl = y.length;
+          for (i = 0; i < yl; i++) {
+            if (elmnt == y[i]) {
+              arrNo.push(i)
+            } else {
+              y[i].classList.remove("select-arrow-active");
+            }
+          }
+          for (i = 0; i < xl; i++) {
+            if (arrNo.indexOf(i)) {
+              x[i].classList.add("select-hide");
+            }
+          }
+        }
+
+        document.addEventListener("click", closeAllSelect);
+    </script>
+{% endblock %}

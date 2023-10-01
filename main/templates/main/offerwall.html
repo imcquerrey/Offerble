@@ -1,0 +1,970 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+	<meta charset="UTF-8">
+	<title>Offerble Offer Wall</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'imgs/favicon.ico' %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="{% static 'css/offerwall.css' %}" type="text/css"/>
+	<link rel="stylesheet" href="{% static 'css/hovermin.css' %}" type="text/css"/>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.min.js"></script>
+    <script src="{% static 'css/qrcode.min.js' %}"></script>
+    <script src="{% static 'css/magic.js' %}"></script>
+    {% csrf_token %}
+</head>
+<body>
+	<div id="header" class="shadow" style="position: relative">
+		<!--<button style="float: left; position: relative; bottom: -1em" class="click">Language: <img class="svg1" src="{% static 'imgs/flags/united-states.svg' %}"><img style="width: 15px; height: 15px; margin-left: 10px" class="svg1" src="{% static 'imgs/down.svg' %}"></button>-->
+        <div class="hideit" style="width:100%">
+            <div id="langsel"></div>
+            <img id="mlogo" style="margin: auto" src="{% static 'imgs/logo.png' %}">
+		    <button id="supp1" class="click lang" onclick="myModal0az.style.display = 'block';history()">Support <img class="svg1" src="{% static 'imgs/support.svg' %}"></button>
+	    </div>
+        <div class="mobile" style="width: 100%">
+            <img id="mlogo" style="margin: auto; display: inline-block" src="{% static 'imgs/logo.png' %}">
+            <div style="float: right; text-align: right; display: flex;">
+                <button id="supp1" class="click lang" onclick="myModal0az.style.display = 'block';history()">Support <img class="svg1" src="{% static 'imgs/support.svg' %}"></button>
+                <div id="langsel-mobile"></div>
+            </div>
+        </div>
+    </div>
+	<div style="margin-left: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center" class="hideit">
+		<div style="display: none">
+            <button class="button click lang" onclick="alls()">All</button>
+            <button class="button click lang" onclick="surveys()">Surveys</button>
+            <button class="button click lang" onclick="apps()">Apps</button>
+            <button class="button click lang" onclick="one_click()">One Click</button>
+            <button class="button click lang" onclick="purchases()">Purchases</button>
+        </div>
+        <div id="filter2" class="custom-select" style="width:140px;line-height: normal">
+                <select class="filter2" id="filt2">
+                    <option value="0" selected class="lang">All</option>
+                    <option value="0" selected class="lang">All</option>
+                    <option value="1" class="lang">Surveys</option>
+                    <option value="2" class="lang">Apps</option>
+                    <option value="3" class="lang">One Click</option>
+                    <option value="4" class="lang">Purchases</option>
+                </select>
+            </div>
+
+        <div style="margin-right: 17px">
+            <div id="filter" class="custom-select" style="width:170px;line-height: normal">
+                <select class="filter">
+                    <option value="0" selected class="lang">Recommended</option>
+                    <option value="0" selected class="lang">Recommended</option>
+                    <option value="1" class="lang">Highest Paying</option>
+                    <option value="2" class="lang">Lowest Paying</option>
+                    <option value="3" class="lang">Newest</option>
+                </select>
+            </div>
+            <!--<button style="background-color:  #E8AF51" class="button click">Recommended<img style="width: 15px; height: 15px; margin-left: 10px" class="svg1" src="{% static 'imgs/down1.svg' %}"></button>-->
+            <button onclick="faq();" style="background-color:  #E8AF51" class="button click lang">FAQ</button>
+        </div>
+    </div>
+    <div id="offers">
+        {% for offer in offers %}
+            <div onclick="window.open('https://offerble.com/offer-direct?id={{ offer.url }}&linkway={{ lgate }}&linkgate={{ offer.linkgate }}&user={{ user }}'); " class="lazyload offer {{ offer.filter }} click" data-number="{{ offer.pos }}" data-feat="{{ offer.featured }}" data-cost="{{ offer.reward1}}" data-date="{{ offer.date}}" data-cat="{{ offer.categories }}">
+                <div class="offer_hold">
+                    <div class="offer_hold2">
+                        <img loading="lazy" class="offer_ico" src="{{ offer.pic }}">
+                        <div class="offer_content">
+                            <h3 class="o_name">{{ offer.name }}</h3>
+                            <h5 class="offer_req">{{ offer.requirements }}</h5>
+                            <div style="margin-bottom: 10px">
+                            {% for dev in offer.categories %}
+                                {% if 'Android' == dev or 'iPhone' == dev or 'iPad' == dev %}
+                                    <button class="offer_cat" style="background-color: {{ colors|get_item:dev }}">{{ dev }}</button>
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center">
+                    {% if offer.featured == 2 and feat == True %}
+                        <img class="feat1" style="width: 35px; height: 35px; display: inline-block; vertical-align: middle;margin-left: 15px" src="{% static 'imgs/feat.png' %}">
+                    {% endif %}
+                    <button class="offer_reward">+ {{ offer.reward }}</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div id="myModal0a" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="myModal0a.style.display = 'none';">&times;</span>
+                <h2 class="lang">Frequently Asked Questions</h2>
+            </div>
+            <div class="modal-body">
+                <h2 class="m_question lang">How Offerble Rewards Works</h2>
+                <h3 class="lgrey lang">What is Offerble Rewards?</h3>
+                <p class="answer lang">Offerble Rewards allows you to earn free credits in your favorite game or website by participating in advertising promotions. Choose an offer that appeals most to you and follow the instructions to receive your free credits.</p>
+                <h3 class="lgrey lang">Can I complete an offer more than once?</h3>
+                <p class="answer lang">Offers from our advertisers can only be completed once per household unless otherwise specified.</p>
+                <h3 class="lgrey lang">When will I receive credits?</h3>
+                <p class="answer lang">Each offer will take a different amount of time to credit. The amount of time required for a credit will be stated in the description for the offer.</p>
+
+                <h2 class="m_question lang">Offer Status on Support page</h2>
+                <h3 class="lgrey lang">'Offer Viewed' status</h3>
+                <p class="answer lang">'Offer Viewed' means that you have clicked on an offer, but we are waiting for the advertiser to verify the completion. If you believe that you have completed an offer correctly, but it has not credited, please contact support.</p>
+                <h3 class="lgrey lang">'Cancelled' status</h3>
+                <p class="answer lang">'Cancelled' means that the offer was originally verified as complete, but the advertiser later decided that this completion was not valid. This can happen if you did not follow the instructions, meet certain requirements, or entered valid information. Unfortunately, this status can not be changed.</p>
+
+                <h2 class="m_question lang">Problems</h2>
+                <h3 class="lgrey lang">I haven't received credit for an offer.</h3>
+                <p class="answer lang">You should check whether the offer shows up in your offer history and whether you have waited the required amount of time for completion. If it does, you can contact support using the link on the Support page.</p>
+                <h3 class="lgrey lang">The offer leads to an incorrect or blank page.</h3>
+                <p class="answer lang">This is likely due to a technical issue with the advertiser. Please report this issue to us via the 'Contact' link on the Support page.</p>            </div>
+            <div class="modal-footer" style="text-align: right">
+                <button class="button click lang" onclick="myModal0a.style.display = 'none';">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="myModal0az" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="myModal0az.style.display = 'none';">&times;</span>
+                <h2 class="lang">Support</h2>
+            </div>
+            <div class="modal-body">
+                <h3>Recent Offers</h3>
+
+                <div class="tab-content">
+                    <p style="font-size: 16px; padding-top: 10px; margin-right: 10px; " class="lang">Although most offers confirm within an hour, please allow up to 1 business day before contacting us regarding unpaid<span> Robux.</span></p>
+                    <a class="click"  style="color: #666; text-decoration: underline" href="mailto:support@offerble.com">For further assistance contact us here: support@offerble.com</a>
+                    <p class="t_error" style="color: red"></p>
+                    <table class="table">
+                        <tr class="noborder">
+                            <th class="noborder lang">Offer Name</th>
+                            <th class="noborder lang">Status</th>
+                            <th class="noborder lang"><span>Robux </span>Earned</th>
+                            <th class="noborder lang">Latest Date</th>
+                        </tr>
+                        <tbody id="offers_s">
+
+                        </tbody>
+                    </table>
+
+                    <p><span class="lang">Your user ID is:</span> <span style="font-weight: bold">{{ user }}</span></p>
+                </div>
+            </div>
+            <div class="modal-footer" style="text-align: right">
+                <button class="button click lang" onclick="myModal0az.style.display = 'none';">Close</button>
+            </div>
+        </div>
+    </div>
+    <div id="myModal0azz" class="modal">
+        <div class="modal-content" style="width: max-content">
+            <div class="modal-header">
+                <span class="close" onclick="myModal0azz.style.display = 'none';">&times;</span>
+                <div style="display: flex; max-width: 80%; margin: 10px 0 10px 0">
+                    <img id="o_imgd" style="display: inline-block; width: 60px; height: 60px; vertical-align: middle; margin-right: 10px">
+                    <h2 class="lang" style="display: inline-block; margin: 0"><span id="o_named"></span></h2>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div style="max-width: 500px; margin-top: 20px">
+                    <p><span style="font-weight: bold">Requirements: </span><span class="o_reqd"></span></p>
+                    <div style="width: 100%; text-align: center">
+                        <div id="qrcode" style="display: flex; justify-content: center"></div>
+                        <p style="margin-top: 10px">or, send this offer to your email</p>
+                        <input id="email1" placeholder="Email" class="input" style="display: block; max-width: 300px; margin: 8px 0 10px 0">
+                        <button class="button click lang" id="sndlnk">Send Link</button>
+                        <p style="display: none" id="errz"></p>
+                        <!--<h2>https://offerble.com/m/<span id="o_idd"></span></h2>-->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="text-align: right">
+                <button class="button click lang" onclick="myModal0azz.style.display = 'none';">Close</button>
+            </div>
+        </div>
+    </div>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-180666088-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-180666088-1');
+    </script>
+    <script>
+        $('#filt2').prop('selectedIndex',0);
+        function show25(i1 = 0){
+            var newi = i1+25
+            var i12 = 0;
+             $(".offer").each(function (index) {
+                 $(this).removeClass('nowshow')
+                 if ($(this).css('display') !== 'none'){
+                     if (i12 > newi){
+                         $(this).addClass('nowshow')
+                     }
+                     i12++;
+                 }
+
+             });
+             window.pos1 = newi
+        }
+        window.act = false
+        window.act2 = false
+        function createATimeout() {
+          var duration = Math.floor(Math.random() * 2500) + 1; // b/w 1 and 6
+          setTimeout(function() {
+                runthis();
+          }, duration);
+         }
+
+        $(window).on('scroll',function() {
+            if ($(window).scrollTop() + 300 >= $(document).height() - $(window).height() && window.act === false) {
+                if (window.navigator.userAgent.indexOf('Android') === -1 && window.navigator.userAgent.indexOf('iPhone') === -1 && window.navigator.userAgent.indexOf('iPad') === -1) {
+                    window.act = true
+                    show25(window.pos1);
+                    window.act = false;
+                } else {
+                    if (window.act === true){
+                        return
+                    }
+                    window.act = true
+                    createATimeout();
+                    window.act = false;
+                }
+            }
+        });
+        function runthis(){
+                    if (window.act2 === true){
+                        return;
+                    }
+                    window.act2 = true
+                    if ($(window).scrollTop() + 300 >= $(document).height() - $(window).height() && window.act === false) {
+                        var pos = $('.offer:last-child').attr('data-number')
+                        $.ajax({
+                            type: "POST",
+                            url: "/wall",
+                            data: {
+                                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                                pos: pos,
+                                id: "{{ lgate }}"
+                            },
+                            success: function (result) {
+                                if (result.status === "success") {
+                                    Object.keys(result.data).forEach(function (key) {
+                                        var arrayLength = result.data[key]['categories'].length;
+                                        var bts = ''
+                                        var mainlist = ['Android', 'iPhone', 'iPad']
+                                        for (var i = 0; i < arrayLength; i++) {
+                                            if (mainlist.indexOf(result.data[key]['categories'][i]) !== -1){
+                                                bts = bts + `
+                                                <button class="offer_cat">` + result.data[key]['categories'][i] + `</button>
+                                                `
+                                            }
+                                        }
+                                        $('#offers').append(`
+                                            <div onclick="window.open('https://offerble.com/offer-direct?id=` + result.data[key]['url'] + `&linkway={{ lgate }}&linkgate=` + result.data[key]['linkgate'] + `&user={{ user }}'); " class="lazyload offer ` + result.data[key]['filter'] + ` click" data-number="` + result.data[key]['pos'] + `" data-feat="` + result.data[key]['featured'] + `" data-cost="` + result.data[key]['reward1'] + `" data-date="` + result.data[key]['date'] + `" data-cat="` + result.data[key]['categories'] + `">
+                                                <div class="offer_hold">
+                                                    <div class="offer_hold2">
+                                                        <img loading="lazy" class="offer_ico" src="` + result.data[key]['pic'] + `">
+                                                        <div class="offer_content">
+                                                            <h3 class="o_name">` + result.data[key]['name'] + `</h3>
+                                                            <h5 class="offer_req">` + result.data[key]['requirements'] + `</h5>
+                                                            <div style="margin-bottom: 10px">
+                                                                ` + bts + `
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button class="offer_reward">+` + result.data[key]['reward'] + `</button>
+                                            </div>
+                                        `)
+                                    });
+                                }
+                            }
+                        })
+                    }
+                    window.act2 = false
+                }
+    </script>
+    <script>
+        var ddData = [
+    {
+        text: "English",
+        value: 'en',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/united-states.svg' %}"
+    },
+    {
+        text: "German",
+        value: 'de',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/germany.svg' %}"
+    },
+    {
+        text: "Chinese",
+        value: 'zh-TW',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/china.svg' %}"
+    },
+    {
+        text: "French",
+        value: 'fr',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/france.svg' %}"
+    },
+            {
+        text: "Danish",
+        value: 'da',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/denmark.svg' %}"
+    },
+            {
+        text: "Italian",
+        value: 'it',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/italy.svg' %}"
+    },
+            {
+        text: "Russian",
+        value: 'ru',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/russia.svg' %}"
+    },
+            {
+        text: "Indonesian",
+        value: 'id',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/indonesia.svg' %}"
+    },
+            {
+        text: "Dutch",
+        value: 'nl',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/netherlands.svg' %}"
+    },
+            {
+        text: "Polish",
+        value: 'pl',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/poland.svg' %}"
+    },
+            {
+        text: "Portuguese",
+        value: 'pt',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/portugal.svg' %}"
+    },
+            {
+        text: "Spanish",
+        value: 'es',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/spain.svg' %}"
+    },
+            {
+        text: "Swedish",
+        value: 'sv',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/sweden.svg' %}"
+    },
+            {
+        text: "Thai",
+        value: 'th',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/netherlands.svg' %}"
+    },
+            {
+        text: "Ukrainian",
+        value: 'uk',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/ukraine.svg' %}"
+    },
+            {
+        text: "Arabic",
+        value: 'ar',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/united-arab-emirates.svg' %}"
+    },
+            {
+        text: "Vietnamese",
+        value: 'vi',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/vietnam.svg' %}"
+    },
+
+        ]
+        var ddData1 = [
+    {
+        value: 'en',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/united-states.svg' %}"
+    },
+    {
+        value: 'de',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/germany.svg' %}"
+    },
+    {
+        value: 'zh-TW',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/china.svg' %}"
+    },
+    {
+        value: 'fr',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/france.svg' %}"
+    },
+            {
+        value: 'da',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/denmark.svg' %}"
+    },
+            {
+        value: 'it',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/italy.svg' %}"
+    },
+            {
+        value: 'ru',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/russia.svg' %}"
+    },
+            {
+        value: 'id',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/indonesia.svg' %}"
+    },
+            {
+        value: 'nl',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/netherlands.svg' %}"
+    },
+            {
+        value: 'pl',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/poland.svg' %}"
+    },
+            {
+        value: 'pt',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/portugal.svg' %}"
+    },
+            {
+        value: 'es',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/spain.svg' %}"
+    },
+            {
+        value: 'sv',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/sweden.svg' %}"
+    },
+            {
+        value: 'th',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/netherlands.svg' %}"
+    },
+            {
+        value: 'uk',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/ukraine.svg' %}"
+    },
+            {
+        value: 'ar',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/united-arab-emirates.svg' %}"
+    },
+            {
+        value: 'vi',
+        selected: false,
+        imageSrc: "{% static 'imgs/flags/vietnam.svg' %}"
+    },
+
+        ]
+        var i;
+        for(i in ddData){
+            if(ddData[i].value === '{{ request.session.lang }}'){
+                ddData[i].selected = true;
+                break;
+            }
+        }
+        for(i in ddData1){
+            if(ddData1[i].value === '{{ request.session.lang }}'){
+                ddData1[i].selected = true;
+                break;
+            }
+        }
+        var langs = {'Support ': {'en': 'Support', 'de': 'Unterstützung', 'zh-TW': '支持', 'fr': 'Soutien', 'da': 'Support', 'it': 'Supporto', 'ru': 'Поддержка', 'id': 'Dukung', 'nl': 'Ondersteuning', 'pl': 'Wsparcie', 'pt': 'Apoio, suporte', 'es': 'Apoyo', 'sv': 'Stöd', 'th': 'สนับสนุน', 'uk': 'Підтримка', 'ar': 'الدعم', 'vi': 'Ủng hộ'}, 'All': {'en': 'All', 'de': 'Alle', 'zh-TW': '所有', 'fr': 'Tout', 'da': 'Alle', 'it': 'Tutti', 'ru': 'Все', 'id': 'Semua', 'nl': 'Alle', 'pl': 'Wszystko', 'pt': 'Tudo', 'es': 'Todos', 'sv': 'Allt', 'th': 'ทั้งหมด', 'uk': 'Всі', 'ar': 'الكل', 'vi': 'Tất cả'}, 'Surveys': {'en': 'Surveys', 'de': 'Umfragen', 'zh-TW': '調查', 'fr': 'Enquêtes', 'da': 'Undersøgelser', 'it': 'Sondaggi', 'ru': 'Обзоры', 'id': 'Survei', 'nl': 'Enquêtes', 'pl': 'Ankiety', 'pt': 'pesquisas', 'es': 'Encuestas', 'sv': 'Undersökningar', 'th': 'แบบสำรวจ', 'uk': 'Опитування', 'ar': 'الدراسات الاستقصائية', 'vi': 'Khảo sát'}, 'Apps': {'en': 'Apps', 'de': 'Apps', 'zh-TW': '應用', 'fr': 'applications', 'da': 'Apps', 'it': 'App', 'ru': 'Программы', 'id': 'Aplikasi', 'nl': 'Apps', 'pl': 'Aplikacje', 'pt': 'Apps', 'es': 'Aplicaciones', 'sv': 'Appar', 'th': 'แอป', 'uk': 'Програми', 'ar': 'تطبيقات', 'vi': 'Ứng dụng'}, 'One Click': {'en': 'One Click', 'de': 'Ein Klick', 'zh-TW': '一鍵式', 'fr': 'Un clic', 'da': 'Et klik', 'it': 'Un click', 'ru': 'Один клик', 'id': 'Satu klik', 'nl': 'Een klik', 'pl': 'Jedno kliknięcie', 'pt': 'Um clique', 'es': 'Un click', 'sv': 'Ett klick', 'th': 'คลิกเดียว', 'uk': 'Один клік', 'ar': 'نقره واحدة', 'vi': 'Một cú nhấp chuột'}, 'Purchases': {'en': 'Purchases', 'de': 'Einkäufe', 'zh-TW': '購買', 'fr': 'Achats', 'da': 'Køb', 'it': 'Acquisti', 'ru': 'Покупки', 'id': 'Pembelian', 'nl': 'Aankopen', 'pl': 'Zakupy', 'pt': 'Compras', 'es': 'Compras', 'sv': 'Inköp', 'th': 'การซื้อ', 'uk': 'Покупки', 'ar': 'المشتريات', 'vi': 'Mua hàng'}, 'Recommended': {'en': 'Recommended', 'de': 'Empfohlen', 'zh-TW': '推薦的', 'fr': 'conseillé', 'da': 'Anbefalede', 'it': 'Consigliato', 'ru': 'рекомендуемые', 'id': 'Direkomendasikan', 'nl': 'Aanbevolen', 'pl': 'Zalecana', 'pt': 'Recomendado', 'es': 'Recomendado', 'sv': 'Rekommenderad', 'th': 'แนะนำ', 'uk': 'Рекомендовано', 'ar': 'موصى به', 'vi': 'Được đề xuất'}, 'Highest Paying': {'en': 'Highest Paying', 'de': 'Höchste Bezahlung', 'zh-TW': '最高支付', 'fr': 'Meilleur salaire', 'da': 'Højst betalende', 'it': 'Pagamento più alto', 'ru': 'Самая высокая зарплата', 'id': 'Pembayaran Tertinggi', 'nl': 'Hoogste betaling', 'pl': 'Najwyższe płatne', 'pt': 'Mais bem pago', 'es': 'Pago más alto', 'sv': 'Högst betalande', 'th': 'จ่ายสูงสุด', 'uk': 'Найвища оплата', 'ar': 'أعلى الأجور', 'vi': 'Thanh toán cao nhất'}, 'Lowest Paying': {'en': 'Lowest Paying', 'de': 'Niedrigste Bezahlung', 'zh-TW': '最低付款', 'fr': 'Paiement le plus bas', 'da': 'Lavest betalende', 'it': 'Pagamento più basso', 'ru': 'Самая низкая оплата', 'id': 'Pembayaran Terendah', 'nl': 'Laagste betaling', 'pl': 'Najniższa płatność', 'pt': 'Menor Pago', 'es': 'Pago más bajo', 'sv': 'Lägst betalande', 'th': 'การจ่ายเงินต่ำที่สุด', 'uk': 'Найменш платні', 'ar': 'أقل الأجور', 'vi': 'Thanh toán thấp nhất'}, 'Newest': {'en': 'Newest', 'de': 'Neueste', 'zh-TW': '最新', 'fr': 'Plus récent', 'da': 'Nyeste', 'it': 'Il più nuovo', 'ru': 'Новейшие', 'id': 'Terbaru', 'nl': 'Nieuwste', 'pl': 'Najnowsza', 'pt': 'O mais novo', 'es': 'El más nuevo', 'sv': 'Nyaste', 'th': 'ใหม่ล่าสุด', 'uk': 'Найновіші', 'ar': 'الأحدث', 'vi': 'Mới nhất'}, 'FAQ': {'en': 'FAQ', 'de': 'FAQ', 'zh-TW': '常問問題', 'fr': 'FAQ', 'da': 'FAQ', 'it': 'FAQ', 'ru': 'Вопросы-Ответы', 'id': 'FAQ', 'nl': 'FAQ', 'pl': 'FAQ', 'pt': 'Perguntas frequentes', 'es': 'Preguntas más frecuentes', 'sv': 'FAQ', 'th': 'คำถามที่พบบ่อย', 'uk': 'FAQ', 'ar': 'التعليمات', 'vi': 'Câu hỏi thường gặp'}, 'Frequently Asked Questions': {'en': 'Frequently Asked Questions', 'de': 'Häufig gestellte Fragen', 'zh-TW': '經常問的問題', 'fr': 'Questions fréquemment posées', 'da': 'Ofte stillede spørgsmål', 'it': 'Domande frequenti', 'ru': 'Часто задаваемые вопросы', 'id': 'Pertanyaan yang Sering Diajukan', 'nl': 'Veel Gestelde Vragen', 'pl': 'Często Zadawane Pytania', 'pt': 'perguntas frequentes', 'es': 'Preguntas frecuentes', 'sv': 'Vanliga frågor', 'th': 'คำถามที่พบบ่อย', 'uk': 'Часті запитання', 'ar': 'أسئلة مكررة', 'vi': 'Các câu hỏi thường gặp'}, 'How ||| Rewards Works': {'en': 'How ||| Rewards Works', 'de': 'Wie ||| Belohnungen funktioniert', 'zh-TW': '如何|||獎勵工作', 'fr': 'Comment ||| Les récompenses fonctionnent', 'da': 'Hvordan ||| Belønninger fungerer', 'it': 'Come ||| Premi funziona', 'ru': 'Как ||| Награды Работы', 'id': 'Bagaimana || E5E5E5 Imbalan Bekerja', 'nl': 'Hoe ||| Beloningen werken', 'pl': 'Jak ||| Rewards działa', 'pt': 'Como ||| Recompensas funciona', 'es': 'Cómo ||| Recompensas funciona', 'sv': 'Hur ||| Belöningar fungerar', 'th': 'อย่างไร ||| ผลงานรางวัล', 'uk': 'Як ||| Нагороди Працює', 'ar': 'كيف ||| المكافآت تعمل', 'vi': 'Làm thế nào ||| Phần thưởng hoạt động'}, 'What is ||| Rewards?': {'en': 'What is ||| Rewards?', 'de': 'Was ist ||| Belohnung?', 'zh-TW': '什麼是|||獎勵？', 'fr': "Qu'est-ce que ||| Récompenses?", 'da': 'Hvad er ||| Belønninger?', 'it': "Cos'è ||| Ricompense?", 'ru': 'Что такое ||| Награды?', 'id': 'Apa itu ||i> Imbalan?', 'nl': 'Wat is ||| Beloningen?', 'pl': 'Co to jest ||| Nagrody?', 'pt': 'O que é ||| Recompensas?', 'es': '¿Qué es ||| Recompensas?', 'sv': 'Vad är ||| Belöningar?', 'th': 'คืออะไร ||| รางวัล?', 'uk': 'Що таке ||| Нагороди?', 'ar': 'ما هو ||| المكافآت؟', 'vi': '||| là gì Phần thưởng?'}, 'Offerble Rewards allows you to earn free credits in your favorite game or website by participating in advertising promotions. Choose an offer that appeals most to you and follow the instructions to receive your free credits.': {'en': 'Offerble Rewards allows you to earn free credits in your favorite game or website by participating in advertising promotions. Choose an offer that appeals most to you and follow the instructions to receive your free credits.', 'de': 'Mit Offerble Rewards können Sie durch die Teilnahme an Werbeaktionen kostenlose Credits für Ihr Lieblingsspiel oder Ihre Lieblingsseite verdienen. Wählen Sie ein Angebot, das Sie am meisten anspricht, und befolgen Sie die Anweisungen, um Ihre kostenlosen Credits zu erhalten.', 'zh-TW': '通過AdGate獎勵計劃，您可以通過參與廣告促銷活動來在自己喜歡的遊戲或網站中獲得免費的積分。選擇最吸引您的優惠，然後按照說明獲得免費積分。', 'fr': 'Offerble Rewards vous permet de gagner des crédits gratuits dans votre jeu ou site Web préféré en participant à des promotions publicitaires. Choisissez une offre qui vous plaît le plus et suivez les instructions pour recevoir vos crédits gratuits.', 'da': 'Offerble Rewards giver dig mulighed for at optjene gratis kreditter i dit yndlingsspil eller websted ved at deltage i reklamekampagner. Vælg et tilbud, der appellerer mest til dig, og følg instruktionerne for at modtage dine gratis kreditter.', 'it': "Offerble Rewards ti consente di guadagnare crediti gratuiti nel tuo gioco o sito web preferito partecipando a promozioni pubblicitarie. Scegli un'offerta che ti piace di più e segui le istruzioni per ricevere i tuoi crediti gratuiti.", 'ru': 'Offerble Rewards позволяет вам зарабатывать бесплатные кредиты в любимой игре или на веб-сайте, участвуя в рекламных акциях. Выберите предложение, которое вам больше всего нравится, и следуйте инструкциям, чтобы получить бесплатные кредиты.', 'id': 'Offerble Rewards memungkinkan Anda mendapatkan kredit gratis di game atau situs web favorit Anda dengan berpartisipasi dalam promosi iklan. Pilih penawaran yang paling menarik bagi Anda dan ikuti petunjuk untuk menerima kredit gratis Anda.', 'nl': 'Met Offerble Rewards kunt u gratis credits verdienen in uw favoriete game of website door deel te nemen aan advertentiepromoties. Kies een aanbieding die u het meest aanspreekt en volg de instructies om uw gratis credits te ontvangen.', 'pl': 'Offerble Rewards umożliwia zarabianie bezpłatnych kredytów w ulubionej grze lub witrynie poprzez udział w promocjach reklamowych. Wybierz ofertę, która najbardziej Ci odpowiada i postępuj zgodnie z instrukcjami, aby otrzymać darmowe kredyty.', 'pt': 'O Offerble Rewards permite que você ganhe créditos grátis em seu jogo ou site favorito, participando de promoções publicitárias. Escolha uma oferta que mais lhe agrade e siga as instruções para receber seus créditos grátis.', 'es': 'Offerble Rewards le permite ganar créditos gratis en su juego o sitio web favorito al participar en promociones publicitarias. Elija la oferta que más le atraiga y siga las instrucciones para recibir sus créditos gratuitos.', 'sv': 'Offerble Rewards låter dig tjäna gratis krediter i ditt favoritspel eller webbplats genom att delta i reklamkampanjer. Välj ett erbjudande som tilltalar dig mest och följ instruktionerna för att få dina gratis krediter.', 'th': 'Offerble Rewards ช่วยให้คุณได้รับเครดิตฟรีในเกมหรือเว็บไซต์ที่คุณชื่นชอบโดยการเข้าร่วมโปรโมชั่นโฆษณา เลือกข้อเสนอที่ดึงดูดใจคุณมากที่สุดและปฏิบัติตามคำแนะนำเพื่อรับเครดิตฟรีของคุณ', 'uk': 'Offerble Rewards дозволяє отримувати безкоштовні кредити у вашій улюбленій грі чи веб-сайті, беручи участь у рекламних акціях. Виберіть пропозицію, яка найбільше вам подобається, і дотримуйтесь інструкцій, щоб отримати безкоштовні кредити.', 'ar': 'تتيح لك Offerble Rewards كسب أرصدة مجانية في لعبتك أو موقعك الإلكتروني المفضل من خلال المشاركة في العروض الترويجية الإعلانية. اختر عرضًا يروق لك كثيرًا واتبع التعليمات لتلقي أرصدةك المجانية.', 'vi': 'Phần thưởng Offerble cho phép bạn kiếm được các khoản tín dụng miễn phí trong trò chơi hoặc trang web yêu thích của mình bằng cách tham gia vào các chương trình khuyến mãi quảng cáo. Chọn một phiếu mua hàng hấp dẫn bạn nhất và làm theo hướng dẫn để nhận các khoản tín dụng miễn phí của bạn.'}, 'Can I complete an offer more than once?': {'en': 'Can I complete an offer more than once?', 'de': 'Kann ich ein Angebot mehrmals abschließen?', 'zh-TW': '我可以多次完成報價嗎？', 'fr': "Puis-je compléter une offre plus d'une fois?", 'da': 'Kan jeg gennemføre et tilbud mere end én gang?', 'it': "Posso completare un'offerta più di una volta?", 'ru': 'Могу ли я оформить предложение более одного раза?', 'id': 'Bisakah saya menyelesaikan penawaran lebih dari sekali?', 'nl': 'Kan ik een aanbieding meerdere keren voltooien?', 'pl': 'Czy mogę wypełnić ofertę więcej niż raz?', 'pt': 'Posso completar uma oferta mais de uma vez?', 'es': '¿Puedo completar una oferta más de una vez?', 'sv': 'Kan jag slutföra ett erbjudande mer än en gång?', 'th': 'ฉันสามารถทำข้อเสนอมากกว่าหนึ่งครั้งได้หรือไม่?', 'uk': 'Чи можу я подати пропозицію більше одного разу?', 'ar': 'هل يمكنني إكمال عرض أكثر من مرة؟', 'vi': 'Tôi có thể hoàn thành một đề nghị nhiều hơn một lần không?'}, 'Offers from our advertisers can only be completed once per household unless otherwise specified.': {'en': 'Offers from our advertisers can only be completed once per household unless otherwise specified.', 'de': 'Angebote unserer Werbetreibenden können nur einmal pro Haushalt abgeschlossen werden, sofern nicht anders angegeben.', 'zh-TW': '除非另有說明，否則每個家庭只能完成一次來自廣告商的報價。', 'fr': "Les offres de nos annonceurs ne peuvent être complétées qu'une seule fois par foyer, sauf indication contraire.", 'da': 'Tilbud fra vores annoncører kan kun gennemføres en gang pr. Husstand, medmindre andet er angivet.', 'it': 'Le offerte dei nostri inserzionisti possono essere completate solo una volta per nucleo familiare se non diversamente specificato.', 'ru': 'Предложения от наших рекламодателей могут быть выполнены только один раз на семью, если не указано иное.', 'id': 'Penawaran dari pengiklan kami hanya dapat diselesaikan sekali per rumah kecuali ditentukan lain.', 'nl': 'Aanbiedingen van onze adverteerders kunnen slechts één keer per huishouden worden ingevuld, tenzij anders aangegeven.', 'pl': 'Oferty od naszych reklamodawców można zrealizować tylko raz na gospodarstwo domowe, chyba że określono inaczej.', 'pt': 'As ofertas de nossos anunciantes só podem ser concluídas uma vez por família, a menos que especificado de outra forma.', 'es': 'Las ofertas de nuestros anunciantes solo se pueden completar una vez por hogar, a menos que se especifique lo contrario.', 'sv': 'Erbjudanden från våra annonsörer kan endast genomföras en gång per hushåll om inte annat anges.', 'th': 'ข้อเสนอจากผู้โฆษณาของเราสามารถทำได้เพียงครั้งเดียวต่อครัวเรือนเว้นแต่จะระบุไว้เป็นอย่างอื่น', 'uk': 'Пропозиції від наших рекламодавців можуть бути виконані лише один раз для кожного домогосподарства, якщо не вказано інше.', 'ar': 'لا يمكن استكمال عروض المعلنين لدينا إلا مرة واحدة لكل أسرة ما لم ينص على خلاف ذلك.', 'vi': 'Ưu đãi từ các nhà quảng cáo của chúng tôi chỉ có thể được hoàn thành một lần cho mỗi hộ gia đình trừ khi có quy định khác.'}, 'When will I receive credits?': {'en': 'When will I receive credits?', 'de': 'Wann bekomme ich Credits?', 'zh-TW': '我什麼時候可以收到學分？', 'fr': 'Quand vais-je recevoir des crédits?', 'da': 'Hvornår får jeg kreditter?', 'it': 'Quando riceverò i crediti?', 'ru': 'Когда я получу кредиты?', 'id': 'Kapan saya akan menerima kredit?', 'nl': 'Wanneer ontvang ik credits?', 'pl': 'Kiedy otrzymam kredyty?', 'pt': 'Quando vou receber créditos?', 'es': '¿Cuándo recibiré los créditos?', 'sv': 'När får jag poäng?', 'th': 'ฉันจะได้รับเครดิตเมื่อใด', 'uk': 'Коли я отримаю кредити?', 'ar': 'متى سأستلم أرصدة؟', 'vi': 'Khi nào tôi sẽ nhận được các khoản tín dụng?'}, 'Each offer will take a different amount of time to credit. The amount of time required for a credit will be stated in the description for the offer.': {'en': 'Each offer will take a different amount of time to credit. The amount of time required for a credit will be stated in the description for the offer.', 'de': 'Die Gutschrift jedes Angebots dauert unterschiedlich lange. Die für eine Gutschrift erforderliche Zeit wird in der Beschreibung des Angebots angegeben.', 'zh-TW': '每個報價將花費不同的時間量。優惠所需時間將在要約說明中說明。', 'fr': "Chaque offre prendra un temps de crédit différent. Le temps requis pour un crédit sera indiqué dans la description de l'offre.", 'da': 'Hvert tilbud tager forskellige tid at kreditere. Den krævede tid til en kredit vil blive angivet i beskrivelsen af \u200b\u200btilbuddet.', 'it': "Ogni offerta richiederà un tempo diverso per l'accredito. La quantità di tempo necessaria per un credito sarà indicata nella descrizione dell'offerta.", 'ru': 'Для каждого предложения потребуется разное время для зачисления. Время, необходимое для получения кредита, будет указано в описании предложения.', 'id': 'Setiap penawaran akan membutuhkan waktu yang berbeda untuk dikreditkan. Jumlah waktu yang diperlukan untuk mendapatkan kredit akan disebutkan dalam deskripsi penawaran.', 'nl': 'Elke aanbieding heeft een andere tijd nodig om te crediteren. De benodigde tijd voor een creditering wordt vermeld in de beschrijving van de aanbieding.', 'pl': 'Każda oferta wymaga innego czasu na przyznanie kredytu. Czas potrzebny na kredyt zostanie podany w opisie oferty.', 'pt': 'Cada oferta leva um tempo diferente para ser creditada. A quantidade de tempo necessária para um crédito será indicada na descrição da oferta.', 'es': 'Cada oferta tomará una cantidad de tiempo diferente para acreditarse. La cantidad de tiempo necesaria para un crédito se indicará en la descripción de la oferta.', 'sv': 'Varje erbjudande tar olika tid att kreditera. Den tid som krävs för en kredit kommer att anges i beskrivningen för erbjudandet.', 'th': 'ข้อเสนอแต่ละรายการจะใช้เวลาในการให้เครดิตแตกต่างกัน ระยะเวลาที่ต้องใช้สำหรับเครดิตจะระบุไว้ในคำอธิบายของข้อเสนอ', 'uk': 'Кожна пропозиція займе різний час для зарахування. Кількість часу, необхідного для отримання кредиту, буде вказано в описі пропозиції.', 'ar': 'سيستغرق كل عرض مقدارًا مختلفًا من الوقت لاعتماده. سيتم ذكر مقدار الوقت المطلوب للحصول على ائتمان في وصف العرض.', 'vi': 'Mỗi phiếu mua hàng sẽ mất một khoảng thời gian khác nhau để ghi có. Khoảng thời gian cần thiết cho một khoản tín dụng sẽ được nêu trong phần mô tả cho phiếu mua hàng.'}, 'Offer Status on Support page': {'en': 'Offer Status on Support page', 'de': 'Angebotsstatus auf der Support-Seite', 'zh-TW': '支持頁面上的優惠狀態', 'fr': "Statut de l'offre sur la page d'assistance", 'da': 'Tilbudsstatus på supportsiden', 'it': "Stato dell'offerta nella pagina di supporto", 'ru': 'Статус предложения на странице поддержки', 'id': 'Status Penawaran di halaman Dukungan', 'nl': 'Aanbiedingsstatus op ondersteuningspagina', 'pl': 'Stan oferty na stronie pomocy technicznej', 'pt': 'Status da oferta na página de suporte', 'es': 'Estado de la oferta en la página de soporte', 'sv': 'Erbjudandestatus på supportsidan', 'th': 'สถานะข้อเสนอในหน้าการสนับสนุน', 'uk': 'Статус пропозиції на сторінці підтримки', 'ar': 'عرض الحالة على صفحة الدعم', 'vi': 'Trạng thái phiếu mua hàng trên trang Hỗ trợ'}, "'Offer Viewed' status": {'en': "'Offer Viewed' status", 'de': 'Status "Angebot angezeigt"', 'zh-TW': '“已查看”狀態', 'fr': 'Statut "Offre vue"', 'da': "Status for 'Tilbud vist'", 'it': 'Stato "Offerta visualizzata"', 'ru': 'Статус "Предложение просмотрено"', 'id': "Status 'Tawarkan Dilihat'", 'nl': "Status 'Aanbieding bekeken'", 'pl': 'Status „Oferta wyświetlona”', 'pt': "Status de 'oferta vista'", 'es': "Estado de 'Oferta vista'", 'sv': 'Status för erbjudande visat', 'th': 'สถานะ "ดูข้อเสนอพิเศษ"', 'uk': 'Статус "Пропозиція переглянута"', 'ar': 'حالة "عرض العرض"', 'vi': "Trạng thái 'Phiếu mua hàng đã xem'"}, "'Offer Viewed' means that you have clicked on an offer, but we are waiting for the advertiser to verify the completion. If you believe that you have completed an offer correctly, but it has not credited, please contact support.": {'en': "'Offer Viewed' means that you have clicked on an offer, but we are waiting for the advertiser to verify the completion. If you believe that you have completed an offer correctly, but it has not credited, please contact support.", 'de': '"Angebot angezeigt" bedeutet, dass Sie auf ein Angebot geklickt haben. Wir warten jedoch darauf, dass der Werbetreibende den Abschluss überprüft. Wenn Sie der Meinung sind, dass Sie ein Angebot korrekt ausgefüllt haben, es jedoch nicht gutgeschrieben wurde, wenden Sie sich bitte an den Support.', 'zh-TW': '“已查看報價”表示您已點擊要約，但我們正在等待廣告客戶驗證完成情況。如果您認為您已正確完成了要約，但尚未記入貸方，請聯繫支持。', 'fr': "«Offre consultée» signifie que vous avez cliqué sur une offre, mais nous attendons que l'annonceur vérifie que celle-ci est terminée. Si vous pensez avoir correctement rempli une offre, mais que celle-ci n'a pas été créditée, veuillez contacter l'assistance.", 'da': "'Tilbud vist' betyder, at du har klikket på et tilbud, men vi venter på, at annoncøren bekræfter afslutningen. Hvis du mener, at du har gennemført et tilbud korrekt, men det ikke er krediteret, bedes du kontakte support.", 'it': '"Offerta visualizzata" significa che hai fatto clic su un\'offerta, ma stiamo aspettando che l\'inserzionista verifichi il completamento. Se ritieni di aver completato correttamente un\'offerta, ma non è stata accreditata, contatta l\'assistenza.', 'ru': '«Предложение просмотрено» означает, что вы нажали на предложение, но мы ждем, пока рекламодатель подтвердит выполнение. Если вы считаете, что оформили предложение правильно, но оно не было зачислено, обратитесь в службу поддержки.', 'id': "'Penawaran Dilihat' berarti Anda telah mengklik sebuah penawaran, tetapi kami menunggu pengiklan untuk memverifikasi penyelesaiannya. Jika Anda yakin bahwa Anda telah menyelesaikan tawaran dengan benar, tetapi belum dikreditkan, harap hubungi dukungan.", 'nl': "'Aanbieding bekeken' betekent dat u op een aanbieding heeft geklikt, maar we wachten op de adverteerder om de voltooiing te verifiëren. Als u denkt dat u een aanbieding correct heeft ingevuld, maar deze niet is bijgeschreven, neem dan contact op met de ondersteuning.", 'pl': '„Oferta wyświetlona” oznacza, że \u200b\u200bkliknąłeś ofertę, ale czekamy, aż reklamodawca zweryfikuje ukończenie. Jeśli uważasz, że poprawnie wypełniłeś ofertę, ale nie została ona zaksięgowana, skontaktuj się z pomocą techniczną.', 'pt': "'Oferta visualizada' significa que você clicou em uma oferta, mas estamos aguardando que o anunciante verifique a conclusão. Se você acredita que concluiu uma oferta corretamente, mas ela não foi creditada, entre em contato com o suporte.", 'es': '"Oferta vista" significa que ha hecho clic en una oferta, pero estamos esperando que el anunciante verifique la finalización. Si cree que ha completado una oferta correctamente, pero no se ha acreditado, comuníquese con el servicio de asistencia.', 'sv': '"Erbjudandet visat" betyder att du har klickat på ett erbjudande, men vi väntar på att annonsören ska verifiera att det är slutfört. Om du tror att du har slutfört ett erbjudande korrekt, men det inte har krediterats, kontakta supporten.', 'th': "'ข้อเสนอที่ดูแล้ว' หมายความว่าคุณได้คลิกที่ข้อเสนอ แต่เรากำลังรอให้ผู้ลงโฆษณายืนยันว่าเสร็จ หากคุณเชื่อว่าคุณดำเนินการตามข้อเสนออย่างถูกต้อง แต่ยังไม่ได้รับเครดิตโปรดติดต่อฝ่ายสนับสนุน", 'uk': '"Переглянута пропозиція" означає, що ви натиснули пропозицію, але ми чекаємо, поки рекламодавець підтвердить завершення. Якщо ви вважаєте, що пропозицію виконали правильно, але вона не зарахована, зв’яжіться зі службою підтримки.', 'ar': '"عرض العرض" يعني أنك قمت بالنقر فوق أحد العروض ، لكننا ننتظر المعلن للتحقق من اكتمال العرض. إذا كنت تعتقد أنك قد أكملت عرضًا بشكل صحيح ، ولكن لم يتم اعتماده ، فيرجى الاتصال بالدعم.', 'vi': "'Phiếu mua hàng đã xem' có nghĩa là bạn đã nhấp vào một phiếu mua hàng, nhưng chúng tôi đang đợi nhà quảng cáo xác minh việc hoàn tất. Nếu bạn tin rằng bạn đã hoàn thành phiếu mua hàng một cách chính xác nhưng chưa được ghi có, vui lòng liên hệ với bộ phận hỗ trợ."}, "'Cancelled' status": {'en': "'Cancelled' status", 'de': "Status 'Abgebrochen'", 'zh-TW': '“已取消”狀態', 'fr': 'Statut «Annulé»', 'da': "'Annulleret' status", 'it': 'Stato "Annullato"', 'ru': 'Статус "Отменено"', 'id': "Status 'Dibatalkan'", 'nl': "Status 'Geannuleerd'", 'pl': 'Status „Anulowano”', 'pt': "Status 'cancelado'", 'es': "Estado 'cancelado'", 'sv': "'Avbruten' status", 'th': 'สถานะ "ยกเลิก"', 'uk': 'Статус "Скасовано"', 'ar': 'الحالة "ملغاة"', 'vi': "Trạng thái 'Đã hủy'"}, "'Cancelled' means that the offer was originally verified as complete, but the advertiser later decided that this completion was not valid. This can happen if you did not follow the instructions, meet certain requirements, or entered valid information. Unfortunately, this status can not be changed.": {'en': "'Cancelled' means that the offer was originally verified as complete, but the advertiser later decided that this completion was not valid. This can happen if you did not follow the instructions, meet certain requirements, or entered valid information. Unfortunately, this status can not be changed.", 'de': '"Storniert" bedeutet, dass das Angebot ursprünglich als vollständig bestätigt wurde. Der Werbetreibende entschied jedoch später, dass dieser Abschluss nicht gültig war. Dies kann passieren, wenn Sie die Anweisungen nicht befolgt, bestimmte Anforderungen erfüllt oder gültige Informationen eingegeben haben. Dieser Status kann leider nicht geändert werden.', 'zh-TW': '“已取消”是指該報價最初已被驗證為完成，但廣告商後來認為此完成無效。如果您未遵循說明，未滿足某些要求或未輸入有效信息，則可能發生這種情況。不幸的是，此狀態無法更改。', 'fr': '"Annulée" signifie que l\'offre a été initialement vérifiée comme étant complète, mais l\'annonceur a décidé par la suite que cette conclusion n\'était pas valide. Cela peut se produire si vous n\'avez pas suivi les instructions, satisfait à certaines exigences ou saisi des informations valides. Malheureusement, ce statut ne peut pas être modifié.', 'da': "'Annulleret' betyder, at tilbuddet oprindeligt blev verificeret som komplet, men annoncøren besluttede senere, at denne færdiggørelse ikke var gyldig. Dette kan ske, hvis du ikke fulgte instruktionerne, opfyldte visse krav eller indtastede gyldige oplysninger. Desværre kan denne status ikke ændres.", 'it': '"Annullato" significa che l\'offerta era stata originariamente verificata come completa, ma l\'inserzionista ha successivamente deciso che questo completamento non era valido. Ciò può accadere se non hai seguito le istruzioni, soddisfatto determinati requisiti o inserito informazioni valide. Purtroppo questo stato non può essere modificato.', 'ru': '«Отменено» означает, что изначально предложение было подтверждено как завершенное, но позже рекламодатель решил, что это завершение было недействительным. Это может произойти, если вы не следовали инструкциям, не соответствовали определенным требованиям или не ввели достоверную информацию. К сожалению, этот статус нельзя изменить.', 'id': "'Dibatalkan' berarti penawaran awalnya diverifikasi sebagai selesai, tetapi pengiklan kemudian memutuskan bahwa penyelesaian ini tidak valid. Ini dapat terjadi jika Anda tidak mengikuti petunjuk, memenuhi persyaratan tertentu, atau memasukkan informasi yang valid. Sayangnya, status ini tidak bisa diubah.", 'nl': "'Geannuleerd' betekent dat de aanbieding oorspronkelijk als compleet is geverifieerd, maar de adverteerder heeft later besloten dat deze aanvulling niet geldig was. Dit kan gebeuren als u de instructies niet heeft opgevolgd, niet aan bepaalde vereisten voldoet of geldige informatie heeft ingevoerd. Deze status kan helaas niet worden gewijzigd.", 'pl': '„Anulowana” oznacza, że \u200b\u200boferta została pierwotnie zweryfikowana jako kompletna, ale reklamodawca zdecydował później, że to zakończenie jest nieprawidłowe. Może się tak zdarzyć, jeśli nie zastosowałeś się do instrukcji, nie spełniłeś pewnych wymagań lub wprowadziłeś prawidłowe informacje. Niestety tego statusu nie można zmienić.', 'pt': "'Cancelado' significa que a oferta foi originalmente verificada como completa, mas o anunciante posteriormente decidiu que essa conclusão não era válida. Isso pode acontecer se você não seguir as instruções, atender a determinados requisitos ou inserir informações válidas. Infelizmente, este status não pode ser alterado.", 'es': '"Cancelada" significa que la oferta se verificó originalmente como completa, pero el anunciante decidió más tarde que esta finalización no era válida. Esto puede suceder si no siguió las instrucciones, no cumplió con ciertos requisitos o ingresó información válida. Desafortunadamente, este estado no se puede cambiar.', 'sv': "'Avbrutet' betyder att erbjudandet ursprungligen verifierades som fullständigt, men annonsören beslutade senare att detta slutförande inte var giltigt. Detta kan hända om du inte följde instruktionerna, uppfyllde vissa krav eller angav giltig information. Tyvärr kan denna status inte ändras.", 'th': "'ยกเลิก' หมายความว่าข้อเสนอพิเศษได้รับการยืนยันว่าสมบูรณ์ แต่ในภายหลังผู้โฆษณาตัดสินใจว่าการดำเนินการนี้ไม่ถูกต้อง กรณีนี้อาจเกิดขึ้นได้หากคุณไม่ปฏิบัติตามคำแนะนำปฏิบัติตามข้อกำหนดบางประการหรือป้อนข้อมูลที่ถูกต้อง ขออภัยสถานะนี้ไม่สามารถเปลี่ยนแปลงได้", 'uk': '"Скасовано" означає, що пропозиція спочатку була підтверджена як повна, але згодом рекламодавець вирішив, що ця пропозиція була недійсною. Це може статися, якщо ви не дотримувались інструкцій, не відповідали певним вимогам або не ввели дійсну інформацію. На жаль, цей статус змінити не можна.', 'ar': '"تم الإلغاء" تعني أنه تم التحقق من اكتمال العرض في الأصل ، ولكن المعلن لاحقًا قرر أن هذا الإكمال غير صالح. يمكن أن يحدث هذا إذا لم تتبع التعليمات أو تفي بمتطلبات معينة أو إذا أدخلت معلومات صحيحة. لسوء الحظ ، لا يمكن تغيير هذا الوضع.', 'vi': "'Đã bị hủy' có nghĩa là ưu đãi ban đầu được xác minh là hoàn tất, nhưng sau đó nhà quảng cáo quyết định rằng việc hoàn thành này không hợp lệ. Điều này có thể xảy ra nếu bạn không làm theo hướng dẫn, đáp ứng các yêu cầu nhất định hoặc nhập thông tin hợp lệ. Rất tiếc, trạng thái này không thể thay đổi."}, 'Problems': {'en': 'Problems', 'de': 'Probleme', 'zh-TW': '問題', 'fr': 'Problèmes', 'da': 'Problemer', 'it': 'Problems', 'ru': 'Проблемы', 'id': 'Problems', 'nl': 'Problemen', 'pl': 'Problemy', 'pt': 'Problems', 'es': 'Problemas', 'sv': 'Problems', 'th': 'ปัญหา', 'uk': 'Problems', 'ar': 'Problems', 'vi': 'Các vấn đề'}, "I haven't received credit for an offer.": {'en': "I haven't received credit for an offer.", 'de': 'Ich habe keine Gutschrift für ein Angebot erhalten.', 'zh-TW': '我還沒有收到報價的信用。', 'fr': "Je n'ai pas reçu de crédit pour une offre.", 'da': 'Jeg har ikke modtaget kredit for et tilbud.', 'it': "Non ho ricevuto credito per un'offerta.", 'ru': 'Я не получил кредита на предложение.', 'id': 'Saya belum menerima kredit untuk sebuah penawaran.', 'nl': 'Ik heb geen krediet gekregen voor een aanbieding.', 'pl': 'Nie otrzymałem kredytu za ofertę.', 'pt': 'Não recebi crédito por uma oferta.', 'es': 'No he recibido crédito por una oferta.', 'sv': 'Jag har inte fått kredit för ett erbjudande.', 'th': 'ฉันไม่ได้รับเครดิตสำหรับข้อเสนอ', 'uk': 'Я не отримав кредит за пропозицію.', 'ar': 'لم أتلق رصيدًا مقابل عرض.', 'vi': 'Tôi đã không nhận được tín dụng cho một đề nghị.'}, 'You should check whether the offer shows up in your offer history and whether you have waited the required amount of time for completion. If it does, you can contact support using the link on the Support page.': {'en': 'You should check whether the offer shows up in your offer history and whether you have waited the required amount of time for completion. If it does, you can contact support using the link on the Support page.', 'de': 'Sie sollten überprüfen, ob das Angebot in Ihrem Angebotsverlauf angezeigt wird und ob Sie die erforderliche Zeit auf die Fertigstellung gewartet haben. In diesem Fall können Sie den Support über den Link auf der Support-Seite kontaktieren.', 'zh-TW': '您應該檢查要約是否顯示在要約歷史記錄中，以及是否已經等待了所需的時間才能完成。如果是這樣，您可以使用“支持”頁面上的鏈接聯繫支持。', 'fr': "Vous devez vérifier si l'offre apparaît dans l'historique de vos offres et si vous avez attendu le temps requis pour la terminer. Si c'est le cas, vous pouvez contacter l'assistance en utilisant le lien sur la page Assistance.", 'da': 'Du bør kontrollere, om tilbuddet vises i din tilbudshistorik, og om du har ventet den krævede tid til afslutning. Hvis det sker, kan du kontakte support ved hjælp af linket på supportsiden.', 'it': "È necessario verificare se l'offerta viene visualizzata nella cronologia delle offerte e se è stato atteso il tempo necessario per il completamento. In tal caso, puoi contattare l'assistenza utilizzando il collegamento nella pagina Assistenza.", 'ru': 'Вы должны проверить, отображается ли предложение в вашей истории предложений и ждали ли вы необходимое количество времени для завершения. Если это так, вы можете связаться со службой поддержки, используя ссылку на странице поддержки.', 'id': 'Anda harus memeriksa apakah penawaran tersebut muncul di riwayat penawaran Anda dan apakah Anda telah menunggu jumlah waktu yang diperlukan untuk penyelesaian. Jika ya, Anda dapat menghubungi dukungan menggunakan tautan di halaman Dukungan.', 'nl': 'U moet controleren of de aanbieding in uw aanbiedingsgeschiedenis voorkomt en of u de vereiste tijd op voltooiing heeft gewacht. Als dit het geval is, kunt u contact opnemen met de ondersteuning via de link op de ondersteuningspagina.', 'pl': 'Powinieneś sprawdzić, czy oferta pojawia się w Twojej historii ofert i czy czekałeś wymaganą ilość czasu na jej realizację. Jeśli tak, możesz skontaktować się z pomocą techniczną, korzystając z łącza na stronie pomocy.', 'pt': 'Você deve verificar se a oferta aparece em seu histórico de ofertas e se você esperou o tempo necessário para a conclusão. Em caso afirmativo, você pode entrar em contato com o suporte usando o link na página Suporte.', 'es': 'Debe verificar si la oferta aparece en su historial de ofertas y si ha esperado la cantidad de tiempo requerida para completarse. Si es así, puede ponerse en contacto con el soporte mediante el enlace de la página de Soporte.', 'sv': 'Du bör kontrollera om erbjudandet dyker upp i din erbjudandehistorik och om du har väntat den tid som krävs för att slutföras. Om så är fallet kan du kontakta support via länken på supportsidan.', 'th': 'คุณควรตรวจสอบว่าข้อเสนอนั้นปรากฏในประวัติข้อเสนอของคุณหรือไม่และคุณได้รอระยะเวลาที่กำหนดเพื่อให้เสร็จ หากเป็นเช่นนั้นคุณสามารถติดต่อฝ่ายสนับสนุนโดยใช้ลิงก์ในหน้าการสนับสนุน', 'uk': 'Вам слід перевірити, чи відображається пропозиція у вашій історії пропозицій, і чи чекали ви необхідну кількість часу для її завершення. Якщо це сталося, ви можете зв’язатися зі службою підтримки за допомогою посилання на сторінці підтримки.', 'ar': 'يجب عليك التحقق مما إذا كان العرض يظهر في سجل العرض الخاص بك وما إذا كنت قد انتظرت الوقت المطلوب لإكماله. إذا كان الأمر كذلك ، فيمكنك الاتصال بالدعم باستخدام الارتباط الموجود في صفحة الدعم.', 'vi': 'Bạn nên kiểm tra xem phiếu mua hàng có hiển thị trong lịch sử phiếu mua hàng hay không và liệu bạn đã đợi đủ thời gian cần thiết để hoàn thành hay chưa. Nếu có, bạn có thể liên hệ với bộ phận hỗ trợ bằng liên kết trên trang Hỗ trợ.'}, 'The offer leads to an incorrect or blank page.': {'en': 'The offer leads to an incorrect or blank page.', 'de': 'Das Angebot führt zu einer falschen oder leeren Seite.', 'zh-TW': '報價導致頁面錯誤或空白。', 'fr': "L'offre conduit à une page incorrecte ou vierge.", 'da': 'Tilbuddet fører til en forkert eller tom side.', 'it': "L'offerta porta a una pagina errata o vuota.", 'ru': 'Предложение приводит к неверной или пустой странице.', 'id': 'Penawaran tersebut mengarah ke halaman yang salah atau kosong.', 'nl': 'Het aanbod leidt tot een onjuiste of blanco pagina.', 'pl': 'Oferta prowadzi do błędnej lub pustej strony.', 'pt': 'A oferta leva a uma página incorreta ou em branco.', 'es': 'La oferta conduce a una página incorrecta o en blanco.', 'sv': 'Erbjudandet leder till en felaktig eller tom sida.', 'th': 'ข้อเสนอนำไปสู่หน้าที่ไม่ถูกต้องหรือว่างเปล่า', 'uk': 'Пропозиція веде до неправильної або порожньої сторінки.', 'ar': 'يؤدي العرض إلى صفحة غير صحيحة أو فارغة.', 'vi': 'Phiếu mua hàng dẫn đến một trang không chính xác hoặc trống.'}, "This is likely due to a technical issue with the advertiser. Please report this issue to us via the 'Contact' link on the Support page.": {'en': "This is likely due to a technical issue with the advertiser. Please report this issue to us via the 'Contact' link on the Support page.", 'de': 'Dies ist wahrscheinlich auf ein technisches Problem mit dem Werbetreibenden zurückzuführen. Bitte melden Sie uns dieses Problem über den Link "Kontakt" auf der Support-Seite.', 'zh-TW': '這可能是由於廣告客戶的技術問題。請通過支持頁面上的“聯繫”鏈接向我們報告此問題。', 'fr': "Cela est probablement dû à un problème technique avec l'annonceur. Veuillez nous signaler ce problème via le lien «Contact» sur la page d'assistance.", 'da': "Dette skyldes sandsynligvis et teknisk problem med annoncøren. Rapporter dette problem til os via linket 'Kontakt' på supportsiden.", 'it': 'Ciò è probabilmente dovuto a un problema tecnico con l\'inserzionista. Segnalaci questo problema tramite il link "Contatto" nella pagina di supporto.', 'ru': 'Вероятно, это связано с технической проблемой рекламодателя. Сообщите нам об этой проблеме, перейдя по ссылке «Контакты» на странице поддержки.', 'id': "Ini mungkin karena masalah teknis dengan pengiklan. Silakan laporkan masalah ini kepada kami melalui link 'Kontak' di halaman Dukungan.", 'nl': "Dit komt waarschijnlijk door een technisch probleem met de adverteerder. Meld dit probleem aan ons via de link 'Contact' op de ondersteuningspagina.", 'pl': 'Jest to prawdopodobnie spowodowane problemem technicznym z reklamodawcą. Prosimy o zgłoszenie tego problemu za pośrednictwem łącza „Kontakt” na stronie pomocy technicznej.', 'pt': "Provavelmente, isso se deve a um problema técnico com o anunciante. Relate esse problema para nós por meio do link 'Contato' na página de suporte.", 'es': 'Es probable que esto se deba a un problema técnico con el anunciante. Infórmanos de este problema a través del enlace "Contacto" de la página de asistencia.', 'sv': "Detta beror troligen på ett tekniskt problem med annonsören. Rapportera detta till oss via länken 'Kontakt' på supportsidan.", 'th': 'ซึ่งน่าจะเกิดจากปัญหาทางเทคนิคกับผู้ลงโฆษณา โปรดรายงานปัญหานี้ให้เราทราบผ่านลิงก์ "ติดต่อ" ในหน้าการสนับสนุน', 'uk': 'Можливо, це пов’язано з технічними проблемами з рекламодавцем. Повідомте нам про цю проблему за посиланням "Контакт" на сторінці підтримки.', 'ar': 'من المحتمل أن يكون هذا بسبب مشكلة فنية مع المعلن. يرجى إبلاغنا بهذه المشكلة عبر رابط "الاتصال" في صفحة الدعم.', 'vi': "Điều này có thể do sự cố kỹ thuật với nhà quảng cáo. Vui lòng báo cáo vấn đề này cho chúng tôi qua liên kết 'Liên hệ' trên trang Hỗ trợ."}, 'Close': {'en': 'Close', 'de': 'Schließen', 'zh-TW': '關', 'fr': 'proche', 'da': 'Tæt', 'it': 'Vicino', 'ru': 'Закрыть', 'id': 'Menutup', 'nl': 'Dichtbij', 'pl': 'Blisko', 'pt': 'Perto', 'es': 'Cerca', 'sv': 'Stänga', 'th': 'ปิด', 'uk': 'Закрити', 'ar': 'قريب', 'vi': 'Đóng'}, 'Support': {'en': 'Support', 'de': 'Unterstützung', 'zh-TW': '支持', 'fr': 'Soutien', 'da': 'Support', 'it': 'Supporto', 'ru': 'Поддержка', 'id': 'Dukung', 'nl': 'Ondersteuning', 'pl': 'Wsparcie', 'pt': 'Apoio, suporte', 'es': 'Apoyo', 'sv': 'Stöd', 'th': 'สนับสนุน', 'uk': 'Підтримка', 'ar': 'الدعم', 'vi': 'Ủng hộ'}, 'Offers': {'en': 'Offers', 'de': 'Bietet an', 'zh-TW': '優惠', 'fr': 'Des offres', 'da': 'Tilbud', 'it': 'Offerte', 'ru': 'Предложения', 'id': 'Penawaran', 'nl': 'Aanbiedingen', 'pl': 'Oferuje', 'pt': 'Ofertas', 'es': 'Ofertas', 'sv': 'Erbjudanden', 'th': 'ข้อเสนอ', 'uk': 'Пропозиції', 'ar': 'عروض', 'vi': 'Ưu đãi'}, 'Although most offers confirm within an hour, please allow up to 1 business day before contacting us regarding unpaid Robux.': {'en': 'Although most offers confirm within an hour, please allow up to 1 business day before contacting us regarding unpaid Robux.', 'de': 'Obwohl die meisten Angebote innerhalb einer Stunde bestätigt werden, erlauben Sie bitte bis zu 1 Werktag, bevor Sie uns bezüglich unbezahlten Robux kontaktieren.', 'zh-TW': '儘管大多數報價在一小時內即可確認，但請在最多1個工作日內與我們聯繫以解決未付款的Robux。', 'fr': "Bien que la plupart des offres soient confirmées dans l'heure, veuillez prévoir jusqu'à 1 jour ouvrable avant de nous contacter au sujet de Robux impayés.", 'da': 'Selvom de fleste tilbud bekræfter inden for en time, skal du give op til 1 hverdag inden du kontakter os angående ubetalt Robux.', 'it': "Sebbene la maggior parte delle offerte venga confermata entro un'ora, attendere fino a 1 giorno lavorativo prima di contattarci in merito a Robux non pagato.", 'ru': 'Хотя большинство предложений подтверждается в течение часа, подождите до 1 рабочего дня, прежде чем связываться с нами по поводу неоплаченного Robux.', 'id': 'Meskipun sebagian besar penawaran dikonfirmasi dalam satu jam, mohon tunggu hingga 1 hari kerja sebelum menghubungi kami terkait Robux yang belum dibayar.', 'nl': 'Hoewel de meeste aanbiedingen binnen een uur worden bevestigd, kan het tot 1 werkdag duren voordat u contact met ons opneemt over onbetaalde Robux.', 'pl': 'Chociaż większość ofert jest potwierdzana w ciągu godziny, prosimy o odczekanie do 1 dnia roboczego przed skontaktowaniem się z nami w sprawie niezapłaconej Robux.', 'pt': 'Embora a maioria das ofertas seja confirmada em uma hora, aguarde até 1 dia útil antes de entrar em contato conosco sobre o Robux não pago.', 'es': 'Aunque la mayoría de las ofertas confirman en una hora, espere hasta 1 día hábil antes de contactarnos con respecto a Robux no pagado.', 'sv': 'Även om de flesta erbjudanden bekräftas inom en timme, vänligen vänta upp till en arbetsdag innan du kontaktar oss angående obetald Robux.', 'th': 'แม้ว่าข้อเสนอส่วนใหญ่จะยืนยันภายในหนึ่งชั่วโมง แต่โปรดเผื่อเวลาไว้ 1 วันทำการก่อนที่จะติดต่อเราเกี่ยวกับ Robux ที่ยังไม่ได้ชำระเงิน', 'uk': 'Хоча більшість пропозицій підтверджуються протягом години, будь ласка, дозвольте до 1 робочого дня, перш ніж зв’язуватися з нами щодо несплаченого Robux.', 'ar': 'على الرغم من تأكيد معظم العروض في غضون ساعة ، يُرجى الانتظار بيوم عمل واحد قبل الاتصال بنا بخصوص Robux غير مدفوعة الأجر.', 'vi': 'Mặc dù hầu hết các ưu đãi xác nhận trong vòng một giờ, vui lòng đợi tối đa 1 ngày làm việc trước khi liên hệ với chúng tôi về Robux chưa thanh toán.'}, 'Status': {'en': 'Status', 'de': 'Status', 'zh-TW': '狀態', 'fr': 'Status', 'da': 'Status', 'it': 'Stato', 'ru': 'Статус', 'id': 'Status', 'nl': 'Status', 'pl': 'Status', 'pt': 'Status', 'es': 'Estado', 'sv': 'Status', 'th': 'สถานะ', 'uk': 'Статус', 'ar': 'الحالة', 'vi': 'Status'}, 'Robux Earned': {'en': 'Robux Earned', 'de': 'Robux verdient', 'zh-TW': 'Robux獲得', 'fr': 'Robux gagné', 'da': 'Robux Optjent', 'it': 'Robux guadagnato', 'ru': 'Робукс заработал', 'id': 'Robux Memperoleh', 'nl': 'Robux verdiend', 'pl': 'Zarobiony Robux', 'pt': 'Robux ganhou', 'es': 'Robux Earned', 'sv': 'Robux tjänat', 'th': 'Robux ได้รับ', 'uk': 'Robux Earned', 'ar': 'Robux Earned', 'vi': 'Robux đã kiếm được'}, 'Latest Date': {'en': 'Latest Date', 'de': 'Letztes Date', 'zh-TW': '最新日期', 'fr': 'Latest Date', 'da': 'Latest Date', 'it': 'Ultima data', 'ru': 'Latest Date', 'id': 'Kencan terakhir', 'nl': 'Latest Date', 'pl': 'Ostateczny termin', 'pt': 'Última data', 'es': 'Latest Date', 'sv': 'Senaste datum', 'th': 'Latest Date', 'uk': 'Остання дата', 'ar': 'Latest Date', 'vi': 'Ngày cuối'}, 'Your user ID is:': {'en': 'Your user ID is:', 'de': 'Ihre Benutzer-ID lautet:', 'zh-TW': '您的用戶ID是：', 'fr': 'Votre ID utilisateur est:', 'da': 'Dit bruger-id er:', 'it': 'Il tuo ID utente è:', 'ru': 'Ваш идентификатор пользователя:', 'id': 'ID pengguna Anda adalah:', 'nl': 'Uw gebruikers-ID is:', 'pl': 'Twoja nazwa użytkownika to:', 'pt': 'Seu ID de usuário é:', 'es': 'Su identificación de usuario es:', 'sv': 'Ditt användar-ID är:', 'th': 'ID ผู้ใช้ของคุณคือ:', 'uk': 'Ваш ідентифікатор користувача:', 'ar': 'معرف المستخدم الخاص بك هو:', 'vi': 'ID người dùng của bạn là:'}, 'Survey name': {'en': 'Survey name', 'de': 'Name der Umfrage', 'zh-TW': '調查名稱', 'fr': "Nom de l'enquête", 'da': 'Undersøgelsens navn', 'it': 'Nome del sondaggio', 'ru': 'Название опроса', 'id': 'Nama survei', 'nl': 'Enquête naam', 'pl': 'Nazwa ankiety', 'pt': 'Nome da pesquisa', 'es': 'Nombre de la encuesta', 'sv': 'Undersökningens namn', 'th': 'ชื่อแบบสำรวจ', 'uk': 'Назва опитування', 'ar': 'اسم الاستطلاع', 'vi': 'Tên khảo sát'}, 'How Offerble Rewards Works': {'en': 'How Offerble Rewards Works', 'de': 'Wie Offerble Belohnungen funktioniert', 'zh-TW': '怎麼樣 Offerble 獎勵工作', 'fr': 'Comment Offerble Les récompenses fonctionnent', 'da': 'Hvordan Offerble Belønninger fungerer', 'it': 'Come Offerble Premi funziona', 'ru': 'Как Offerble Награды Работы', 'id': 'Bagaimana Offerble Imbalan Bekerja', 'nl': 'Hoe Offerble Beloningen werken', 'pl': 'W jaki sposób Offerble Rewards działa', 'pt': 'Como Offerble Recompensas funciona', 'es': 'Cómo Offerble Recompensas funciona', 'sv': 'På vilket sätt Offerble Belöningar fungerar', 'th': 'อย่างไร Offerble ผลงานรางวัล', 'uk': 'Як Offerble Нагороди Працює', 'ar': 'هو Offerble المكافآت تعمل', 'vi': 'Làm sao Offerble Phần thưởng hoạt động'}, 'What is Offerble Rewards?': {'en': 'What is Offerble Rewards?', 'de': 'Was ist Offerble Belohnung?', 'zh-TW': '什麼是 Offerble 獎勵？', 'fr': 'Quel est Offerble Récompenses?', 'da': 'Hvad er Offerble Belønninger?', 'it': 'Cosa è Offerble Ricompense?', 'ru': 'Что такое Offerble Награды?', 'id': 'apa yang Offerble Imbalan?', 'nl': 'Wat is Offerble Beloningen?', 'pl': 'Co jest Offerble Nagrody?', 'pt': 'O que é Offerble Recompensas?', 'es': 'Que es Offerble Recompensas?', 'sv': 'Vad är Offerble Belöningar?', 'th': 'คืออะไร Offerble รางวัล?', 'uk': 'Що Offerble Нагороди?', 'ar': 'ما هو Offerble المكافآت؟', 'vi': 'Những gì là Offerble Phần thưởng?'}, 'Offer Name': {'en': 'Offer Name', 'de': 'Angebotsname', 'zh-TW': '優惠名稱', 'fr': "Nom de l'offre", 'da': 'Tilbudsnavn', 'it': 'Nome offerta', 'ru': 'Название предложения', 'id': 'Nama Penawaran', 'nl': 'Aanbieding naam', 'pl': 'Nazwa oferty', 'pt': 'Nome da oferta', 'es': 'Nombre de oferta', 'sv': 'Erbjudande namn', 'th': 'ชื่อข้อเสนอ', 'uk': 'Назва пропозиції', 'ar': 'اسم العرض', 'vi': 'Tên ưu đãi'}}
+        $(".lang").each(function (index) {
+            $(this).attr('data-text', $(this).text())
+        });
+        window.firstin = false
+        window.firstin2 = false
+        function langsel1(data) {
+            if (window.firstin){
+                if ('lang'.indexOf(window.location.href)){
+                     window.location.href = window.location.href.split('&lang=')[0]+ '&lang=' + data.selectedData.value
+                }
+                else {
+                    window.location.href = window.location.href + '&lang=' + data.selectedData.value
+                }
+            }
+            window.firstin = true;
+            $(".lang").each(function (index) {
+               // console.log($(this).attr('data-text'))
+                try {
+                    var repl = langs[$(this).attr('data-text')]['{{ request.session.lang }}']
+                    //console.log($(this).prev().prop('nodeName'))
+                    //console.log(repl)
+                    $(this).text(repl.replace('Robux', '{{ points }}'))
+                }catch (e) {
+
+                }
+                //wd.push($(this).text())
+            });
+        }
+        function langsel12(data) {
+            if (window.firstin2){
+                if ('lang'.indexOf(window.location.href)){
+                     window.location.href = window.location.href.split('&lang=')[0]+ '&lang=' + data.selectedData.value
+                }
+                else {
+                    window.location.href = window.location.href + '&lang=' + data.selectedData.value
+                }
+            }
+            window.firstin2 = true;
+            $(".lang").each(function (index) {
+               // console.log($(this).attr('data-text'))
+                try {
+                    var repl = langs[$(this).attr('data-text')]['{{ request.session.lang }}']
+                    //console.log($(this).prev().prop('nodeName'))
+                    //console.log(repl)
+                    $(this).text(repl.replace('Robux', '{{ points }}'))
+                }catch (e) {
+
+                }
+                //wd.push($(this).text())
+            });
+        }
+
+        $('#langsel').ddslick({
+            data: ddData,
+            onSelected: function (data) {
+                langsel1(data);
+            }
+        });
+        $('#langsel-mobile').ddslick({
+            data: ddData1,
+            onSelected: function (data) {
+                langsel12(data);
+            }
+        });
+        //var wd = [];
+        //var uniqueNames = [];
+        //$.each(wd, function(i, el){
+        //    if($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
+        //});
+        //console.log(uniqueNames)
+    </script>
+    <script>
+        function history() {
+            var err = $('.t_error');
+            var offers = $('#offers_s')
+            offers.empty();
+            err.css('display', 'none')
+		    $.ajax({
+				type: "GET",
+				url: "/history?user={{ user }}&linkway={{ lgate }}",
+				success: function(result) {
+					if(result.status === "success")
+					{
+					    result.data.forEach(function(value, index, array) {
+                            offers.append(`
+                                <tr>
+                                    <td>` + value.name + `</td>
+                                    <td>` + value.status + `</td>
+                                    <td>` + value.earned + `</td>
+                                    <td>` + value.data + `</td>
+                                </tr>
+                            `)
+                        });
+					    if (offers.children().length === 0){
+					        offers.append(`
+					            <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+					        `)
+                        }
+					}
+					else
+					{
+					    err.css('display', '')
+						err.text(result.message)
+					}
+
+				}
+			})
+        }
+    </script>
+    <script>
+        var myModal0a = document.getElementById("myModal0a");
+        var myModal0az = document.getElementById("myModal0az");
+        var myModal0azz = document.getElementById("myModal0azz");
+        window.onclick = function(event) {
+            if (event.target === myModal0a) {
+                myModal0a.style.display = "none";
+            }
+            else if (event.target === myModal0az) {
+                myModal0az.style.display = "none";
+            }
+            else if (event.target === myModal0azz) {
+                myModal0azz.style.display = "none";
+            }
+        }
+        function faq(){
+            myModal0a.style.display = "block";
+        }
+
+        function alls(){
+            $('.mobile').css('display', '')
+            $('.survey').css('display', '')
+            $('.oneclick').css('display', '')
+            $('.purchase').css('display', '')
+            $('.None').css('display', '')
+            show25();
+        }
+        function surveys(){
+            $('.mobile').css('display', 'none')
+            $('.survey').css('display', '')
+            $('.oneclick').css('display', 'none')
+            $('.purchase').css('display', 'none')
+            $('.None').css('display', 'none')
+            show25();
+        }
+        function apps(){
+            $('.mobile').css('display', '')
+            $('.survey').css('display', 'none')
+            $('.oneclick').css('display', 'none')
+            $('.purchase').css('display', 'none')
+            $('.None').css('display', 'none')
+            show25();
+        }
+        function one_click(){
+            $('.mobile').css('display', 'none')
+            $('.survey').css('display', 'none')
+            $('.oneclick').css('display', '')
+            $('.purchase').css('display', 'none')
+            $('.None').css('display', 'none')
+            show25();
+        }
+        function purchases(){
+            $('.mobile').css('display', 'none')
+            $('.survey').css('display', 'none')
+            $('.oneclick').css('display', 'none')
+            $('.purchase').css('display', '')
+            $('.None').css('display', 'none')
+            show25();
+        }
+        function updateit() {
+            if ($('#filter .select-selected').text() === 'Recommended'){
+                recommended()
+            }
+            else if ($('#filter .select-selected').text() === 'Highest Paying'){
+                highest()
+            }
+            else if ($('#filter .select-selected').text() === 'Lowest Paying'){
+                lowest()
+            }
+            else if ($('#filter .select-selected').text() === 'Newest'){
+                newest()
+            }
+            else if ($('#filter .select-selected').text() === 'Easiest'){
+                easiet()
+            }
+
+        }
+        function updateit1(){
+            if ($('#filter2 .select-selected').text() === 'All'){
+                alls()
+            }
+            else if ($('#filter2 .select-selected').text() === 'Surveys'){
+                surveys()
+            }
+            else if ($('#filter2 .select-selected').text() === 'Apps'){
+                apps()
+            }
+            else if ($('#filter2 .select-selected').text() === 'One Click'){
+                one_click()
+            }
+            else if ($('#filter2 .select-selected').text() === 'Purchases'){
+                purchases()
+            }
+        }
+
+        function recommended(){
+            var $wrapper = $('#offers');
+            $wrapper.find('.offer').sort(function(a, b) {
+                return +a.dataset.number - +b.dataset.number;
+            })
+            .appendTo($wrapper);
+            show25();
+        }
+        function highest(){
+            var $wrapper = $('#offers');
+            $wrapper.find('.offer').sort(function(a, b) {
+                return -a.dataset.cost - -b.dataset.cost;
+            })
+            .appendTo($wrapper);
+            show25();
+        }
+        function lowest(){
+            var $wrapper = $('#offers');
+
+            $wrapper.find('.offer').sort(function(a, b) {
+                return +a.dataset.cost - +b.dataset.cost;
+            })
+            .appendTo($wrapper);
+            show25();
+        }
+        function newest(){
+            var elems = $('#offers');
+            elems.find('.offer').sort(function(a, b) {
+                return -a.dataset.date - -b.dataset.date;
+            }).appendTo(elems)
+            show25();
+        }
+
+        $( document ).ready(function() {
+            if (window.navigator.userAgent.indexOf('iPad')=== -1 && window.navigator.userAgent.indexOf('iPhone')=== -1 && window.navigator.userAgent.indexOf('Android')=== -1) {
+                updateit()
+            }
+            else {
+                recommended()
+            }
+        });
+    </script>
+    <script>
+        var x, i, j, l, ll, selElmnt, a, b, c;
+        x = document.getElementsByClassName("custom-select");
+        l = x.length;
+        for (i = 0; i < l; i++) {
+          selElmnt = x[i].getElementsByTagName("select")[0];
+          ll = selElmnt.length;
+          a = document.createElement("DIV");
+          a.setAttribute("class", "select-selected");
+          a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+          x[i].appendChild(a);
+          b = document.createElement("DIV");
+          b.setAttribute("class", "select-items select-hide");
+          for (j = 1; j < ll; j++) {
+            c = document.createElement("DIV");
+            c.innerHTML = selElmnt.options[j].innerHTML;
+            c.addEventListener("click", function(e) {
+                var y, i, k, s, h, sl, yl;
+                s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+                sl = s.length;
+                h = this.parentNode.previousSibling;
+                for (i = 0; i < sl; i++) {
+                  if (s.options[i].innerHTML == this.innerHTML) {
+                    s.selectedIndex = i;
+                    h.innerHTML = this.innerHTML;
+                    y = this.parentNode.getElementsByClassName("same-as-selected");
+                    yl = y.length;
+                    for (k = 0; k < yl; k++) {
+                      y[k].removeAttribute("class");
+                    }
+                    this.setAttribute("class", "same-as-selected");
+                      var mainid = this.parentElement.parentElement.id
+                    if (mainid === 'filter2'){
+                        updateit1()
+                    }
+                    else{
+                        updateit();
+                    }
+                    break;
+                  }
+                }
+                h.click();
+            });
+            b.appendChild(c);
+          }
+          x[i].appendChild(b);
+          a.addEventListener("click", function(e) {
+            e.stopPropagation();
+            closeAllSelect(this);
+            this.nextSibling.classList.toggle("select-hide");
+            this.classList.toggle("select-arrow-active");
+          });
+        }
+
+        function closeAllSelect(elmnt) {
+          var x, y, i, xl, yl, arrNo = [];
+          x = document.getElementsByClassName("select-items");
+          y = document.getElementsByClassName("select-selected");
+          xl = x.length;
+          yl = y.length;
+          for (i = 0; i < yl; i++) {
+            if (elmnt == y[i]) {
+              arrNo.push(i)
+            } else {
+              y[i].classList.remove("select-arrow-active");
+            }
+          }
+          for (i = 0; i < xl; i++) {
+            if (arrNo.indexOf(i)) {
+              x[i].classList.add("select-hide");
+            }
+          }
+        }
+
+        document.addEventListener("click", closeAllSelect);
+    </script>
+    <script>
+        $( document ).ready(function() {
+            var offs = $('#offers');
+
+            function orderapp() {
+                offs.find('.offer').sort(function (a, b) {
+                    return -a.dataset.mob - -b.dataset.mob;
+                })
+                    .appendTo(offs);
+                show25();
+            }
+
+            //if (window.navigator.userAgent.indexOf('Android') > -1) {
+                //offs.children().each(function (i) {
+                   // var cats = $(this).attr('data-cat').toString()
+                  //  if (cats.indexOf('iPhone') > 0 && (cats.indexOf('Android')) === -1) {
+                  //      $(this).remove();
+                  //  } else if (cats.indexOf('iPad') > 0 && (cats.indexOf('Android')) === -1) {
+                 //       $(this).remove();
+                 //   } else if (cats.indexOf('Android') > 0) {
+                 //       $(this).attr('data-mob', '5')
+                 //   } else {
+                 //       $(this).attr('data-mob', '0')
+                 //   }
+               // });
+               // orderapp();
+            //} else if (window.navigator.userAgent.indexOf('iPhone')> -1) {
+               // offs.children().each(function (i) {
+                 //   var cats = $(this).attr('data-cat').toString()
+                //    if (cats.indexOf('Android') > 0 && (cats.indexOf('iPhone')) === -1) {
+                //        $(this).remove();
+                //    } else if (cats.indexOf('iPad') > 0 && (cats.indexOf('iPhone')) === -1) {
+                //        $(this).remove();
+                 //   } else if (cats.indexOf('iPhone') > 0) {
+                 //       $(this).attr('data-mob', '5')
+                //    } else {
+                //        $(this).attr('data-mob', '0')
+                //    }
+               // });
+                //orderapp();
+           // } else if (window.navigator.userAgent.indexOf('iPad')> -1) {
+                //offs.children().each(function (i) {
+                 //   var cats = $(this).attr('data-cat').toString()
+                 //   if (cats.indexOf('Android') > 0 && (cats.indexOf('iPad')) === -1) {
+                 //       $(this).remove();
+                //    } else if (cats.indexOf('iPhone') > 0 && (cats.indexOf('iPad')) === -1) {
+                //        $(this).remove();
+                //    } else if (cats.indexOf('iPad') > 0) {
+                //        $(this).attr('data-mob', '5')
+                //    } else {
+                //        $(this).attr('data-mob', '0')
+                //    }
+               // });
+                //orderapp();
+            //}
+            //else{
+            if (window.navigator.userAgent.indexOf('iPad')=== -1 && window.navigator.userAgent.indexOf('iPhone')=== -1 && window.navigator.userAgent.indexOf('Android')=== -1) {
+                offs.children().each(function (i) {
+
+                    var cats = $(this).attr('data-cat').toString()
+                    if (cats.indexOf('Android') > 0 || cats.indexOf('iPad') > 0 || cats.indexOf('iPhone') > 0 ) {
+                        var elm1 = $(this)
+                        var idz = $(this).attr('data-number')
+                        $(this).attr('onclick', 'mobile(' + idz + ', `'+ elm1.attr('onclick').replace(`'`, ``) + '`)')
+                    }
+
+                });
+                show25();
+            }
+        });
+        window.qrcode = ''
+        function mobile(idz, lnk){
+            $.ajax({
+            type: "POST",
+            url: "/m/zz",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                lnk: lnk,
+
+            },
+            success: function(result) {
+                if(result.status === "success")
+                {
+                    found = $("#offers").find(`[data-number='${idz}']`)
+                    $('#o_named').text(found.find('.o_name').text())
+                    $('#o_imgd').attr("src", found.find('.offer_ico').attr("src"))
+                    $('.o_reqd').text(found.find('.offer_req').text())
+                    $('#sndlnk').attr('onclick', 'sndlnk($(this), `https://offerble.com/m/'+ result.lnk + '`)')
+                    //$('#o_idd').text(result.lnk)
+                    //https://offerble.com/m/
+                    //if (window.qrcode !== ''){
+                        //window.qrcode.clear()
+                    //}
+                    $('#qrcode').html('');
+                    window.qrcode = new QRCode("qrcode", {
+                        text: "https://offerble.com/m/"+result.lnk,
+                        width: 128,
+                        height: 128,
+                        colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                    $('#errz').css('display', 'none')
+                    myModal0azz.style.display = "block";
+                }
+            }
+        })
+        }
+
+
+        function sndlnk(e, lnk){
+            e.attr("disabled","disabled");
+            var gg = $('#errz')
+            gg.css('display', 'none')
+            $.ajax({
+            type: "POST",
+            url: "/send",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                lnk: lnk,
+                email: $('#email1').val()
+
+            },
+            success: function(result) {
+                if(result.status === "success")
+                {
+                    gg.css('color', 'green')
+                    gg.text(result.message)
+                    gg.css('display', '')
+                }
+                else{
+                    gg.css('color', 'red')
+                    gg.text(result.message)
+                    gg.css('display', '')
+                }
+            }
+
+            })
+            e.removeAttr("disabled");
+        }
+     $('#email1').val('')
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% extends "main/header.html" %}
+{% load static %}
+
+{% block header %}
+	<link rel="stylesheet" href="{% static 'css/apps.css' %}" type="text/css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    {% csrf_token %}
+{% endblock %}
+
+{% block content %}
+    <div class="shadow" style="background-color: white; max-width: 100%; text-align: left; margin: 30px; padding-top: 20px; padding-bottom: 35px; margin-bottom: 60px">
+        <h2 style="padding-bottom: 20px; border-bottom: 1px solid #ebedf2; padding-left:  30px; margin: 0">Your Profile</h2>
+        <div style="padding: 30px;">
+            <div style="max-width: 600px">
+                <h2>Change Password</h2>
+                <p>Current Password</p>
+                <input type="password" id="curp" class="input" placeholder="Enter current password">
+                <p>New Password</p>
+                <input type="password" id="npass" class="input" placeholder="Enter new password">
+                <p>Confirm New Password</p>
+                <input type="password" id="nnpass" class="input" placeholder="Enter new password">
+                <button class="button click" style="font-size: 18px; margin-top: 10px" onclick="changew($(this), 'pass')">Submit</button>
+                <p id="error-msg1"></p>
+            </div>
+
+            <div style="max-width: 600px; margin-top: 50px">
+                <h2>Change Email</h2>
+                <p>Current Password</p>
+                <input type="password" id="curpz" class="input" placeholder="Enter current password">
+                <p>New Email</p>
+                <input type="password" id="email" class="input" placeholder="Enter new email">
+                <p>Confirm New Email</p>
+                <input type="password" id="email1" class="input" placeholder="Enter new email">
+                <button class="button click" style="font-size: 18px; margin-top: 10px" onclick="changew($(this), 'email')">Submit</button>
+                <p id="error-msg1"></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block add_scripts %}
+    <script>
+    function changew(e, meth1){
+        e.attr("disabled","disabled");
+        var gg = $('#error-msg1')
+        var gg2 = $('#error-msg12')
+        gg.css('display', 'none')
+        gg2.css('display', 'none')
+        if (meth1 === 'pass') {
+            if ($('#npass').val() !== $('#nnpass').val()) {
+                gg.css('display', '').css('color', 'red')
+                gg.text('Both passwords do not match')
+                return
+            }
+        }
+        if (meth1 === 'email') {
+            if ($('#email').val() !== $('#email1').val()) {
+                gg2.css('display', '').css('color', 'red')
+                gg2.text('Both emails do not match')
+                return
+            }
+        }
+        $.ajax({
+            type: "POST",
+            url: "/qreset",
+            data: {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                password: $('#curp').val(),
+                npassword: $('#npass').val(),
+                meth1: meth1,
+                password1: $('#curp1').val(),
+                email: $('#email').val(),
+
+
+            },
+            success: function(result) {
+                if(result.status === "success")
+                {
+                    if (meth1 === 'email') {
+                        gg2.css('display', '').css('color', 'green')
+                        gg2.text(result.message)
+                    }
+                    else{
+                        gg.css('display', '').css('color', 'green')
+                        gg.text(result.message)
+                    }
+                }
+                else
+                {
+                    if (meth1 === 'email') {
+                        gg2.css('display', '').css('color', 'red')
+                        gg2.text(result.message)
+                    }
+                    else{
+                        gg.css('display', '').css('color', 'red')
+                        gg.text(result.message)
+                    }
+                }
+            }
+        })
+        $('#npass').val('')
+        $('#nnpass').val('')
+        $('#curp').val('')
+        e.removeAttr("disabled");
+    }
+    </script>
+{% endblock %}

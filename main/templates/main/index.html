@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Offerble - Convert visitors into customers</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'imgs/favicon.ico' %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'css/hovermin.css' %}" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <header class="sticky" id="navbar">
+        <ul>
+            <li style="margin-left: 60px"><img style="width: 225px; height: 70px;; display: inline-block; vertical-align: middle" src="{% static 'imgs/logo.png' %}"></li>
+            <li class="hideit" style="margin-left: auto;"><a id="home1" class="main_col" href="/">Home</a></li>
+            <li class="hideit"><a href="mailto:support@offerble.com">Contact</a></li>
+            <li class="hideit"><a href="/login">Login</a></li>
+            <li class="hideit" style="margin-right: 60px"><button class="button click" onclick="location.href = '/register'">Register</button></li>
+        </ul>
+    </header>
+    <div class="content">
+        <div style=" display: flex;" id="maincontent">
+            <div id="leftcontent" style="background-color: #36393f;">
+                <div id="leftcontent-1" style="color: white;">
+                    <h1 style="">Convert visitors into customers</h1>
+                    <h2 style="font-weight: normal!important;">Boost revenue, engagement, retention.</h2>
+                    <div>
+                        <button onclick="location.href = '/register'" class="button click" style="display: inline-block; margin: 5px 5px 5px 0">Monetize</button>
+                        <button onclick="window.location = 'mailto:support@offerble.com'" class="button click" style="display: inline-block; margin: 5px">Advertise</button>
+                    </div>
+                </div>
+            </div>
+            <!--background-color: #85FFBD;background-image: linear-gradient(45deg, #85FFBD 0%, #75c92a 100%);-->
+            <div class="hideit" id="rightcontent" style="">
+                <img id="rightcontent-1" class="" style="border-top-left-radius: 30px; border-top-right-radius: 30px" src="{% static 'imgs/yess.png' %}">
+            </div>
+        </div>
+        <div id="secondcontent">
+            <h1 id="howworks" style="color: white; font-size: 60px">Features</h1>
+            <div style="width: 100%; margin-top: 0">
+                <div class="hideit" id="flexit">
+                    <div id="secondcontent-left" style="text-align: center">
+                        <img style="max-width:100%; height: auto" src="{% static 'imgs/desktop1.png' %}">
+                    </div>
+                    <div id="secondcontent-right">
+                        <div id="s_m" class="shadowsmall" style="background-color: #44af60; padding: 10px 40px 10px 40px; width: 85%; margin-right:16px;">
+                            <div style="max-width: 650px">
+                                <h3 style="font-size: 25px; color: white">Offer Wall</h3>
+                                <h3 style="font-weight: normal; color: white">Integrate our Offer Wall for a high performance offer matching engine to give your users the best experience possible!</h3>
+                                <h3 style="font-size: 25px; color: white">Effortless Integration</h3>
+                                <h3 style="font-weight: normal; color: white">With multiple options to fit your specific needs, including in-app, mobile web, and desktop.</h3>
+                                <h3 style="font-size: 25px; color: white">Instant Payouts</h3>
+                                <h3 style="font-weight: normal; color: white">Unlike other offerwalls, you don't have to wait 2 weeks to a month for a payout. On Offerble, you can payout anytime you want.</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile">
+                    <div id="secondcontent-right">
+                        <div class="shadowsmall" style="background-color: #44af60; padding: 10px 40px 10px 40px; max-width: 100%; margin-bottom: 50px; margin-top: 10px">
+                            <div style="max-width: 650px; text-align: left">
+                                <h3 style="font-size: 25px; color: white">Offer Wall</h3>
+                                <h3 style="font-weight: normal; color: white">Integrate our Offer Wall for a high performance offer matching engine to give your users the best experience possible!</h3>
+                                <h3 style="font-size: 25px; color: white">Effortless Integration </h3>
+                                <h3 style="font-weight: normal; color: white">With multiple options to fit your specific needs, including in-app, mobile web, and desktop.</h3>
+                                <h3 style="font-size: 25px; color: white">Instant Payouts</h3>
+                                <h3 style="font-weight: normal; color: white">Unlike other offerwalls, you don't have to wait 2 weeks to a month for a payout. On Offerble, you can payout anytime you want.</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="secondcontent-left"  style="text-align: center">
+                        <img style="max-width:100%; height: auto"  src="{% static 'imgs/desktop1.png' %}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div id="flexcol" style=" display: none!important; max-width: 100%; margin: auto; overflow-x: hidden">
+                <div onclick="location.href = '/register'" class="click" id="holz" style="margin: auto; width: 50%; display: flex; flex-direction: column; background-color: #44af60; padding: 45px; font-size: 28px">
+                    <p class="texto" style="margin:auto; width: max-content; padding-bottom: 5px; border-bottom: solid 1px white; color: white;">Publishers</p>
+                    <p class="texto" style="margin:auto; width: max-content;color: white">Monetize your traffic</p>
+                </div>
+                <div onclick="window.location = 'mailto:support@offerble.com'" id="holz2" class="click" style="margin: auto; width: 50%; display: flex; flex-direction: column; background-color: #36393f; padding: 45px; font-size: 28px">
+                    <p class="texto2" style="margin:auto; width: max-content; padding-bottom: 5px; border-bottom: solid 1px white; color: white;">Advertisers</p>
+                    <p class="texto2" style="margin:auto; width: max-content;color: white">Generate more leaders</p>
+                </div>
+            </div>
+            <div style="display: block; text-align: center">
+                <div>
+                <h3>Solutions</h3>
+                <a href="/register">Monetize</a>
+                <a href="mailto:support@offerble.com">Advertise</a>
+                </div>
+                <div>
+                    <h3>Contact Us</h3>
+                    <a href="mailto:support@offerble.com">Email</a>
+                </div>
+                <div>
+                    <h3>Legal</h3>
+                    <a href="/privacy">Terms of Service</a>
+                    <a href="/privacy">Privacy Policy</a>
+                </div>
+            </div>
+            <p style="font-size: 16px; margin-top: 25px">© Offerble 2020</p>
+        </footer>
+    </div>
+    <script>
+        window.onscroll = function() {myFunction()};
+        var navbar = document.getElementById("navbar");
+        function myFunction() {
+          if (window.pageYOffset > 0) {
+            navbar.classList.add("shadow")
+          } else {
+            navbar.classList.remove("shadow");
+          }
+        }
+        $(function() {
+          $('#holz').hover(function() {
+            $('.texto').css('transform', 'scale(1.1)');
+          }, function() {
+            // on mouseout, reset the background colour
+            $('.texto').css('transform', '');
+          });
+        });
+        $(function() {
+          $('#holz2').hover(function() {
+            $('.texto2').css('transform', 'scale(1.1)');
+          }, function() {
+            // on mouseout, reset the background colour
+            $('.texto2').css('transform', '');
+          });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends "main/header.html" %}
+{% load static %}
+
+{% block header %}
+	<link rel="stylesheet" href="{% static 'css/dashboard.css' %}" type="text/css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/c3.min.css' %}" type="text/css"/>
+    <script src="{% static 'css/d3.min.js' %}"></script>
+    <script src="{% static 'css/c3.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div style="padding: 15px 30px 30px 30px; margin-bottom: 60px">
+        <h1 style="color: white; margin-bottom: 40px">Overview</h1>
+        <div style="background-color: white; display: flex;justify-content: space-between;border-radius: 5px" class="">
+            <div class="stat_box">
+                <h3>Revenue</h3>
+                <h4 class="main_col">$0.00</h4>
+            </div>
+            <div class="stat_box">
+                <h3>Clicks</h3>
+                <h4 class="main_col">0</h4>
+            </div>
+            <div class="stat_box">
+                <h3>Conversions</h3>
+                <h4 class="main_col">0</h4>
+            </div>
+            <div class="stat_box">
+                <h3>Avg Daily RPC</h3>
+                <h4 class="main_col">$0.00</h4>
+            </div>
+        </div>
+        <div style="display: flex; margin-top: 35px" id="charts">
+            <div class=" ch_hold" style="width: 100%; min-width: 500px; margin-right: 15px; display: inline-block; background-color: white; text-align: left;padding-top: 20px; padding-bottom: 35px; border-radius: 5px">
+                <div style="padding-bottom: 20px; border-bottom: 1px solid #ebedf2; padding-left:  30px;">
+                    <img class="chart_img" src="{% static 'imgs/chart.svg' %}">
+                    <h2 style="display: inline-block; margin: 0; vertical-align: middle">24 Hour Chart</h2>
+                </div>
+                <div id="chart1"></div>
+            </div>
+            <div class=" ch_hold" style="width:100%; min-width: 500px; margin-left: 15px; display: inline-block; background-color: white; text-align: left;padding-top: 20px; padding-bottom: 35px; border-radius: 5px">
+                <div style="padding-bottom: 20px; border-bottom: 1px solid #ebedf2; padding-left:  30px;">
+                    <img class="chart_img" src="{% static 'imgs/chart.svg' %}">
+                    <h2 style="display: inline-block; margin: 0; vertical-align: middle">10 Day Chart</h2>
+                </div>
+                <div id="chart2"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block add_scripts %}
+    <script>
+    </script>
+{% endblock %}

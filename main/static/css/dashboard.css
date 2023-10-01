@@ -1,0 +1,29 @@
+@media screen and (max-width: 1300px) {
+    #charts{
+        flex-wrap: wrap;
+    }
+    .ch_hold{
+        margin: 10px 0 10px 0!important;
+    }
+}
+@media not screen and (max-width: 1300px) {
+
+}
+.stat_box{
+    padding: 25px;
+    border-right: solid 1px #ebedf2;
+    display: inline-block;
+    padding-right: 50px;
+    flex-basis: 100%;
+}
+.chart_img{
+    width: 37px;
+    height: 37px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+*,*:focus,*:hover{
+    outline:none;
+}
